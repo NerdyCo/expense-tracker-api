@@ -69,29 +69,29 @@ A personal finance tracker to log income and expenses by category.
 ## 🛢️ SQL Schema
 
 ```sql
-CREATE TABLE User (
+CREATE TABLE Customer (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    username VARCHAR(50) UNIQUE NOT NULL,
+    customer VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL
 );
 
 CREATE TABLE Category (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id BIGINT NOT NULL,
+    customer_id BIGINT NOT NULL,
     name VARCHAR(50) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE
+    FOREIGN KEY (customer_id) REFERENCES Customer(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Transaction (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
-    user_id BIGINT NOT NULL,
+    customer_id BIGINT NOT NULL,
     category_id BIGINT NOT NULL,
     amount DECIMAL(12,2) NOT NULL,
     type VARCHAR(10) CHECK (type IN ('INCOME', 'EXPENSE')) NOT NULL,
     description TEXT,
     date DATE NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES User(id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES User(id) ON DELETE CASCADE,
     FOREIGN KEY (category_id) REFERENCES Category(id) ON DELETE CASCADE
 );
 ```
