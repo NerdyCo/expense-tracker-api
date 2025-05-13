@@ -3,8 +3,12 @@ package com.dwi.expensetracker.domain.entities;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.dwi.expensetracker.domain.enums.TransactionType;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,7 +41,8 @@ public class TransactionEntity {
 
     private BigDecimal amount;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private TransactionType type;
 
     private String description;
 
