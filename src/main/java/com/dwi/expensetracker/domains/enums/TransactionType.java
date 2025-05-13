@@ -1,4 +1,4 @@
-package com.dwi.expensetracker.domain.enums;
+package com.dwi.expensetracker.domains.enums;
 
 public enum TransactionType {
     INCOME,

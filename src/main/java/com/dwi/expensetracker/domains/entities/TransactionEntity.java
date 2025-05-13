@@ -1,9 +1,9 @@
-package com.dwi.expensetracker.domain.entities;
+package com.dwi.expensetracker.domains.entities;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.dwi.expensetracker.domain.enums.TransactionType;
+import com.dwi.expensetracker.domains.enums.TransactionType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

@@ -1,4 +1,4 @@
-package com.dwi.expensetracker.domain.entities;
+package com.dwi.expensetracker.domains.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

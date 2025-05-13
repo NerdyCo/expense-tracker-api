@@ -1,4 +1,4 @@
-package com.dwi.expensetracker.domain.entities;
+package com.dwi.expensetracker.domains.entities;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
