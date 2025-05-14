@@ -9,7 +9,7 @@ import com.dwi.expensetracker.mappers.Mapper;
 
 @Component
 public class CategoryMapperImpl implements Mapper<CategoryEntity, CategoryDto> {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public CategoryMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;

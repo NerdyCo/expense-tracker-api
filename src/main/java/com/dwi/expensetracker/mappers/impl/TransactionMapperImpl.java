@@ -9,7 +9,7 @@ import com.dwi.expensetracker.mappers.Mapper;
 
 @Component
 public class TransactionMapperImpl implements Mapper<TransactionEntity, TransactionDto> {
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     public TransactionMapperImpl(ModelMapper modelMapper) {
         this.modelMapper = modelMapper;
