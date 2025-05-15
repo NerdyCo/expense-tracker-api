@@ -32,13 +32,6 @@
 	</properties>
 	<dependencies>
 		<dependency>
-			<groupId>org.assertj</groupId>
-			<artifactId>assertj-core</artifactId>
-			<version>3.26.0</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
@@ -59,10 +52,17 @@
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- security -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
 		<!-- test only -->
@@ -75,6 +75,20 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>5.14.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.assertj</groupId>
+			<artifactId>assertj-core</artifactId>
+			<version>3.26.0</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
