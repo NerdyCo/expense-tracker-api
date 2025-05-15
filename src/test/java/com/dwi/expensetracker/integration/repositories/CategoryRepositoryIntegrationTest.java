@@ -17,12 +17,12 @@ import com.dwi.expensetracker.repositories.CustomerRepository;
 
 @DataJpaTest
 public class CategoryRepositoryIntegrationTest {
-    private final CategoryRepository undertest;
+    private final CategoryRepository underTest;
     private final CustomerRepository customerRepository;
 
     @Autowired
-    public CategoryRepositoryIntegrationTest(CategoryRepository undertest, CustomerRepository customerRepository) {
-        this.undertest = undertest;
+    public CategoryRepositoryIntegrationTest(CategoryRepository underTest, CustomerRepository customerRepository) {
+        this.underTest = underTest;
         this.customerRepository = customerRepository;
     }
 
@@ -31,9 +31,9 @@ public class CategoryRepositoryIntegrationTest {
         CustomerEntity customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
         CategoryEntity category = TestDataUtil.createTestCategoryEntityA(customer);
 
-        undertest.save(category);
+        underTest.save(category);
 
-        Optional<CategoryEntity> result = undertest.findById(category.getId());
+        Optional<CategoryEntity> result = underTest.findById(category.getId());
 
         assertThat(result).isPresent();
         assertThat(result.get().getName()).isEqualTo("Food & Beverage");
@@ -48,9 +48,9 @@ public class CategoryRepositoryIntegrationTest {
         CategoryEntity categoryB = TestDataUtil.createTestCategoryEntityB(customer);
         CategoryEntity categoryC = TestDataUtil.createTestCategoryEntityC(customer);
 
-        undertest.saveAll(List.of(categoryA, categoryB, categoryC));
+        underTest.saveAll(List.of(categoryA, categoryB, categoryC));
 
-        Iterable<CategoryEntity> result = undertest.findAll();
+        Iterable<CategoryEntity> result = underTest.findAll();
 
         assertThat(result).hasSize(3).containsExactly(categoryA, categoryB, categoryC);
     }
