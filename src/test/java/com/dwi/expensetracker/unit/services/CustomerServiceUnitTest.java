@@ -1,4 +1,4 @@
-package com.dwi.expensetracker.unit.repositories;
+package com.dwi.expensetracker.unit.services;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -27,7 +27,7 @@ import com.dwi.expensetracker.repositories.CustomerRepository;
 import com.dwi.expensetracker.services.impl.CustomerServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-public class CustomerRepositoryUnitTests {
+public class CustomerServiceUnitTest {
 
     private static final Long CUSTOMER_ID = 1L;
 
