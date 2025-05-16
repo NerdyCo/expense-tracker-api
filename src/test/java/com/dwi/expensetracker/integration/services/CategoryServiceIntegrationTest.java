@@ -15,23 +15,20 @@ import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.CategoryEntity;
 import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.services.CategoryService;
-import com.dwi.expensetracker.services.CustomerService;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CategoryServiceIntegrationTest {
     private final CategoryService underTest;
-    private final CustomerService customerService;
 
     @Autowired
-    public CategoryServiceIntegrationTest(CategoryService underTest, CustomerService customerService) {
+    public CategoryServiceIntegrationTest(CategoryService underTest) {
         this.underTest = underTest;
-        this.customerService = customerService;
     }
 
     @Test
     public void testThatCategoryCanBeCreatedAndRecalled() {
-        CustomerEntity customer = customerService.save(TestDataUtil.createTestCustomerEntityA());
+        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
         CategoryEntity category = TestDataUtil.createTestCategoryEntityA(customer);
 
         CategoryEntity savedCategory = underTest.save(category);
@@ -45,11 +42,13 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatMultipleCategoriesCaBeCreatedAndRecalled() {
-        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
+        CustomerEntity customerA = TestDataUtil.createTestCustomerEntityA();
+        CustomerEntity customerB = TestDataUtil.createTestCustomerEntityB();
+        CustomerEntity customerC = TestDataUtil.createTestCustomerEntityC();
 
-        underTest.save(TestDataUtil.createTestCategoryEntityA(customer));
-        underTest.save(TestDataUtil.createTestCategoryEntityB(customer));
-        underTest.save(TestDataUtil.createTestCategoryEntityC(customer));
+        underTest.save(TestDataUtil.createTestCategoryEntityA(customerA));
+        underTest.save(TestDataUtil.createTestCategoryEntityB(customerB));
+        underTest.save(TestDataUtil.createTestCategoryEntityC(customerC));
 
         Page<CategoryEntity> result = underTest.findAll(PageRequest.of(0, 10));
 
@@ -61,7 +60,7 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatCategoryCanBePartiallyUpdated() {
-        CustomerEntity customer = customerService.save(TestDataUtil.createTestCustomerEntityA());
+        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
         CategoryEntity savedCategory = underTest.save(TestDataUtil.createTestCategoryEntityA(customer));
 
         CategoryEntity updateCategory = CategoryEntity.builder()
@@ -75,12 +74,13 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatCategoryCanBeDeleted() {
-        CustomerEntity customer = customerService.save(TestDataUtil.createTestCustomerEntityA());
-        CategoryEntity savedcategory = TestDataUtil.createTestCategoryEntityB(customer);
+        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
+        CategoryEntity category = TestDataUtil.createTestCategoryEntityB(customer);
+        CategoryEntity savedCategory = underTest.save(category);
 
-        underTest.delete(savedcategory.getId());
+        underTest.delete(savedCategory.getId());
 
-        boolean result = underTest.doesExist(savedcategory.getId());
+        boolean result = underTest.doesExist(savedCategory.getId());
 
         assertThat(result).isFalse();
     }
