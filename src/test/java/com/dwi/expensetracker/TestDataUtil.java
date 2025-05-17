@@ -3,6 +3,9 @@ package com.dwi.expensetracker;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.dwi.expensetracker.domains.dtos.CategoryDto;
+import com.dwi.expensetracker.domains.dtos.CustomerDto;
+import com.dwi.expensetracker.domains.dtos.TransactionDto;
 import com.dwi.expensetracker.domains.entities.CategoryEntity;
 import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.domains.entities.TransactionEntity;
@@ -10,6 +13,7 @@ import com.dwi.expensetracker.domains.enums.TransactionType;
 
 public class TestDataUtil {
         // customer
+        // entity
         public static CustomerEntity createTestCustomerEntityA() {
                 return CustomerEntity.builder()
                                 .email("kautsar@gmail.com")
@@ -34,7 +38,33 @@ public class TestDataUtil {
                                 .build();
         }
 
+        // dto
+        public static CustomerDto createTestCustomerDtoA() {
+                return CustomerDto.builder()
+                                .email("kautsar@gmail.com")
+                                .username("kautsar")
+                                .password("kautsar123")
+                                .build();
+        }
+
+        public static CustomerDto createTestCustomerDtoB() {
+                return CustomerDto.builder()
+                                .email("teguh@gmail.com")
+                                .username("teguh")
+                                .password("teguh123")
+                                .build();
+        }
+
+        public static CustomerDto createTestCustomerDtoC() {
+                return CustomerDto.builder()
+                                .email("dwi@gmail.com")
+                                .username("dwi")
+                                .password("dwi123")
+                                .build();
+        }
+
         // category
+        // entity
         public static CategoryEntity createTestCategoryEntityA(final CustomerEntity customer) {
                 return CategoryEntity.builder()
                                 .customer(customer)
@@ -56,7 +86,30 @@ public class TestDataUtil {
                                 .build();
         }
 
+        // dto
+        public static CategoryDto createTestCategoryDtoA(final CustomerDto customer) {
+                return CategoryDto.builder()
+                                .customer(customer)
+                                .name("Food & Beverage")
+                                .build();
+        }
+
+        public static CategoryDto createTestCategoryDtoB(final CustomerDto customer) {
+                return CategoryDto.builder()
+                                .customer(customer)
+                                .name("Transportation")
+                                .build();
+        }
+
+        public static CategoryDto createTestCategoryDtoC(final CustomerDto customer) {
+                return CategoryDto.builder()
+                                .customer(customer)
+                                .name("Hobby")
+                                .build();
+        }
+
         // transaction
+        // entity
         public static TransactionEntity createTestTransactionEntityA(
                         final CustomerEntity customer,
                         final CategoryEntity category) {
@@ -87,6 +140,46 @@ public class TestDataUtil {
                         final CustomerEntity customer,
                         final CategoryEntity category) {
                 return TransactionEntity.builder()
+                                .customer(customer)
+                                .category(category)
+                                .amount(new BigDecimal("5000"))
+                                .type(TransactionType.EXPENSE)
+                                .description("Coffee")
+                                .date(LocalDate.of(2025, 5, 5))
+                                .build();
+        }
+
+        // dto
+        public static TransactionDto createTestTransactionDtoA(
+                        final CustomerDto customer,
+                        final CategoryDto category) {
+                return TransactionDto.builder()
+                                .customer(customer)
+                                .category(category)
+                                .amount(new BigDecimal("30000"))
+                                .type(TransactionType.EXPENSE)
+                                .description("Lunch with friends")
+                                .date(LocalDate.of(2025, 5, 1))
+                                .build();
+        }
+
+        public static TransactionDto createTestTransactionDtoB(
+                        final CustomerDto customer,
+                        final CategoryDto category) {
+                return TransactionDto.builder()
+                                .customer(customer)
+                                .category(category)
+                                .amount(new BigDecimal("100000"))
+                                .type(TransactionType.INCOME)
+                                .description("Freelance project")
+                                .date(LocalDate.of(2025, 5, 3))
+                                .build();
+        }
+
+        public static TransactionDto createTestTransactionDtoC(
+                        final CustomerDto customer,
+                        final CategoryDto category) {
+                return TransactionDto.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("5000"))

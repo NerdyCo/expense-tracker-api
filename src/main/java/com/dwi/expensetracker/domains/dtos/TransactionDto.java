@@ -3,8 +3,6 @@ package com.dwi.expensetracker.domains.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
 import lombok.AllArgsConstructor;
@@ -19,9 +17,9 @@ import lombok.NoArgsConstructor;
 public class TransactionDto {
     private Long id;
 
-    private CustomerEntity customer;
+    private CustomerDto customer;
 
-    private CategoryEntity category;
+    private CategoryDto category;
 
     private BigDecimal amount;
 
