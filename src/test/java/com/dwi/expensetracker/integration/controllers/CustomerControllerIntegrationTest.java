@@ -9,7 +9,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.dtos.CustomerDto;
+import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
 import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.services.CustomerService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,7 +35,7 @@ public class CustomerControllerIntegrationTest {
 
     @Test
     public void testCreateCustomerReturns201() throws Exception {
-        CustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
+        CreateCustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
         String customerJson = objectMapper.writeValueAsString(customerDto);
 
         mockMvc.perform(post("/api/customers")
@@ -46,7 +46,7 @@ public class CustomerControllerIntegrationTest {
 
     @Test
     public void testCreateCustomerReturnsSavedCustomer() throws Exception {
-        CustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
+        CreateCustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
         String customerJson = objectMapper.writeValueAsString(customerDto);
 
         mockMvc.perform(post("/api/customers")
@@ -85,7 +85,7 @@ public class CustomerControllerIntegrationTest {
     @Test
     public void testFullUpdateReturns200AndUpdatedData() throws Exception {
         CustomerEntity savedCustomerEntity = customerService.save(TestDataUtil.createTestCustomerEntityA());
-        CustomerDto updateCustomerDto = TestDataUtil.createTestCustomerDtoB();
+        CreateCustomerDto updateCustomerDto = TestDataUtil.createTestCustomerDtoB();
         String customerJson = objectMapper.writeValueAsString(updateCustomerDto);
 
         mockMvc.perform(put("/api/customers/" + savedCustomerEntity.getId())
@@ -98,7 +98,7 @@ public class CustomerControllerIntegrationTest {
 
     @Test
     public void testFullUpdateReturns404WhenNotExists() throws Exception {
-        CustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
+        CreateCustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
         String customerJson = objectMapper.writeValueAsString(customerDto);
 
         mockMvc.perform(put("/api/customers/999")
@@ -110,7 +110,7 @@ public class CustomerControllerIntegrationTest {
     @Test
     public void testPartialUpdateReturns200AndUpdatedField() throws Exception {
         CustomerEntity savedCustomerEntity = customerService.save(TestDataUtil.createTestCustomerEntityA());
-        CustomerDto updateCustomer = TestDataUtil.createTestCustomerDtoA();
+        CreateCustomerDto updateCustomer = TestDataUtil.createTestCustomerDtoA();
         updateCustomer.setUsername("UPDATED");
         String customerJson = objectMapper.writeValueAsString(updateCustomer);
 

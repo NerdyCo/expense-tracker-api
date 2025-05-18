@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dwi.expensetracker.domains.dtos.TransactionDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
 import com.dwi.expensetracker.domains.entities.TransactionEntity;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.TransactionService;

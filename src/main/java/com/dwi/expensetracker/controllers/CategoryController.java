@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dwi.expensetracker.domains.dtos.CategoryDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
 import com.dwi.expensetracker.domains.entities.CategoryEntity;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.CategoryService;

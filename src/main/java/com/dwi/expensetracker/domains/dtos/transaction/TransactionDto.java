@@ -1,8 +1,10 @@
-package com.dwi.expensetracker.domains.dtos;
+package com.dwi.expensetracker.domains.dtos.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
+import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
 import lombok.AllArgsConstructor;

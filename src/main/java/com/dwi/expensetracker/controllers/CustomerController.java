@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dwi.expensetracker.domains.dtos.CustomerDto;
+import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
+import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
 import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.CustomerService;
@@ -27,12 +28,13 @@ import lombok.RequiredArgsConstructor;
 public class CustomerController {
     private final CustomerService customerService;
     private final Mapper<CustomerEntity, CustomerDto> customerMapper;
+    private final Mapper<CustomerEntity, CreateCustomerDto> createCustomMapper;
 
     @PostMapping
-    public ResponseEntity<CustomerDto> createCustomer(@RequestBody CustomerDto customerDto) {
-        CustomerEntity customerEntity = customerMapper.mapFrom(customerDto);
+    public ResponseEntity<CreateCustomerDto> createCustomer(@RequestBody CreateCustomerDto createCustomerDto) {
+        CustomerEntity customerEntity = createCustomMapper.mapFrom(createCustomerDto);
         CustomerEntity savedCustomerEntity = customerService.save(customerEntity);
-        CustomerDto savedDto = customerMapper.mapTo(savedCustomerEntity);
+        CreateCustomerDto savedDto = createCustomMapper.mapTo(savedCustomerEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
 

@@ -1,4 +1,4 @@
-package com.dwi.expensetracker.domains.dtos;
+package com.dwi.expensetracker.domains.dtos.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CustomerDto {
+public class CreateCustomerDto {
     private Long id;
 
     private String username;

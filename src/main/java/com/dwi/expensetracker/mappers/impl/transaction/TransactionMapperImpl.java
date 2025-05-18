@@ -1,9 +1,9 @@
-package com.dwi.expensetracker.mappers.impl;
+package com.dwi.expensetracker.mappers.impl.transaction;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import com.dwi.expensetracker.domains.dtos.TransactionDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
 import com.dwi.expensetracker.domains.entities.TransactionEntity;
 import com.dwi.expensetracker.mappers.Mapper;
 

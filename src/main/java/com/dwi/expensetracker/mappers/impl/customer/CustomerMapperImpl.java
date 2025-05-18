@@ -1,9 +1,9 @@
-package com.dwi.expensetracker.mappers.impl;
+package com.dwi.expensetracker.mappers.impl.customer;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import com.dwi.expensetracker.domains.dtos.CustomerDto;
+import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
 import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.mappers.Mapper;
 

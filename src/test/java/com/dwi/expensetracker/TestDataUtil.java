@@ -3,9 +3,10 @@ package com.dwi.expensetracker;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.dwi.expensetracker.domains.dtos.CategoryDto;
-import com.dwi.expensetracker.domains.dtos.CustomerDto;
-import com.dwi.expensetracker.domains.dtos.TransactionDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
+import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
+import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
 import com.dwi.expensetracker.domains.entities.CategoryEntity;
 import com.dwi.expensetracker.domains.entities.CustomerEntity;
 import com.dwi.expensetracker.domains.entities.TransactionEntity;
@@ -39,24 +40,24 @@ public class TestDataUtil {
         }
 
         // dto
-        public static CustomerDto createTestCustomerDtoA() {
-                return CustomerDto.builder()
+        public static CreateCustomerDto createTestCustomerDtoA() {
+                return CreateCustomerDto.builder()
                                 .email("kautsar@gmail.com")
                                 .username("kautsar")
                                 .password("kautsar123")
                                 .build();
         }
 
-        public static CustomerDto createTestCustomerDtoB() {
-                return CustomerDto.builder()
+        public static CreateCustomerDto createTestCustomerDtoB() {
+                return CreateCustomerDto.builder()
                                 .email("teguh@gmail.com")
                                 .username("teguh")
                                 .password("teguh123")
                                 .build();
         }
 
-        public static CustomerDto createTestCustomerDtoC() {
-                return CustomerDto.builder()
+        public static CreateCustomerDto createTestCustomerDtoC() {
+                return CreateCustomerDto.builder()
                                 .email("dwi@gmail.com")
                                 .username("dwi")
                                 .password("dwi123")
