@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "customer")
-public class CustomerEntity {
+public class Customer {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "customer_id_seq")
     private Long id;

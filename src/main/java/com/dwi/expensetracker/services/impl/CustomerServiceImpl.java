@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
+import com.dwi.expensetracker.domains.entities.Customer;
 import com.dwi.expensetracker.repositories.CustomerRepository;
 import com.dwi.expensetracker.services.CustomerService;
 
@@ -33,17 +33,17 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<CustomerEntity> findAll(Pageable pageable) {
+    public Page<Customer> findAll(Pageable pageable) {
         return customerRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<CustomerEntity> findOne(Long id) {
+    public Optional<Customer> findOne(Long id) {
         return customerRepository.findById(id);
     }
 
     @Override
-    public CustomerEntity partialUpdate(Long id, CustomerEntity customerEntity) {
+    public Customer partialUpdate(Long id, Customer customerEntity) {
         customerEntity.setId(id);
 
         return customerRepository.findById(id).map(existingCustomer -> {
@@ -58,7 +58,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerEntity save(CustomerEntity customerEntity) {
+    public Customer save(Customer customerEntity) {
         if (customerEntity.getPassword() != null) {
             String hashedPassword = passwordEncoder.encode(customerEntity.getPassword());
             customerEntity.setPassword(hashedPassword);

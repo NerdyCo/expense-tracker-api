@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
+import com.dwi.expensetracker.domains.entities.Customer;
 import com.dwi.expensetracker.repositories.CustomerRepository;
 
 @DataJpaTest
@@ -24,10 +24,10 @@ public class CustomerRepositoryIntegrationTest {
 
     @Test
     public void testThatCustomerCanBeCreatedAndRecalled() {
-        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
+        Customer customer = TestDataUtil.createTestCustomerEntityA();
         underTest.save(customer);
 
-        Optional<CustomerEntity> result = underTest.findById(customer.getId());
+        Optional<Customer> result = underTest.findById(customer.getId());
 
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(customer);
@@ -35,12 +35,12 @@ public class CustomerRepositoryIntegrationTest {
 
     @Test
     public void testThatMultipleCustomersCanBeCreatedAndRecalled() {
-        CustomerEntity customerA = TestDataUtil.createTestCustomerEntityA();
-        CustomerEntity customerB = TestDataUtil.createTestCustomerEntityB();
+        Customer customerA = TestDataUtil.createTestCustomerEntityA();
+        Customer customerB = TestDataUtil.createTestCustomerEntityB();
 
         underTest.saveAll(List.of(customerA, customerB));
 
-        Iterable<CustomerEntity> result = underTest.findAll();
+        Iterable<Customer> result = underTest.findAll();
 
         assertThat(result)
                 .hasSize(2)

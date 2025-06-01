@@ -19,14 +19,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "category")
-public class CategoryEntity {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "category_id_seq")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
+    private Customer customer;
 
     private String name;
 

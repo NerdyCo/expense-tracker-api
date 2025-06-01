@@ -26,18 +26,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "transaction")
-public class TransactionEntity {
+public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "transaction_id_seq")
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "customer_id")
-    private CustomerEntity customer;
+    private Customer customer;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+    private Category category;
 
     private BigDecimal amount;
 

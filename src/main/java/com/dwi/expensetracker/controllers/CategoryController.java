@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
 import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
+import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.CategoryService;
 
@@ -27,13 +27,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final Mapper<CategoryEntity, CategoryDto> categoryMapper;
-    private final Mapper<CategoryEntity, CreateCategoryDto> createCategoryMapper;
+    private final Mapper<Category, CategoryDto> categoryMapper;
+    private final Mapper<Category, CreateCategoryDto> createCategoryMapper;
 
     @PostMapping
     public ResponseEntity<CreateCategoryDto> createCategory(@RequestBody CreateCategoryDto createCategoryDto) {
-        CategoryEntity categoryEntity = createCategoryMapper.mapFrom(createCategoryDto);
-        CategoryEntity savedCategoryEntity = categoryService.save(categoryEntity);
+        Category categoryEntity = createCategoryMapper.mapFrom(createCategoryDto);
+        Category savedCategoryEntity = categoryService.save(categoryEntity);
         CreateCategoryDto savedDto = createCategoryMapper.mapTo(savedCategoryEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
@@ -61,7 +61,7 @@ public class CategoryController {
         }
 
         categoryDto.setId(id);
-        CategoryEntity updatedCategoryEntity = categoryService.save(categoryMapper.mapFrom(categoryDto));
+        Category updatedCategoryEntity = categoryService.save(categoryMapper.mapFrom(categoryDto));
         return ResponseEntity.ok(categoryMapper.mapTo(updatedCategoryEntity));
     }
 
@@ -73,7 +73,7 @@ public class CategoryController {
             return ResponseEntity.notFound().build();
         }
 
-        CategoryEntity updatedCategoryEntity = categoryService.partialUpdate(id, categoryMapper.mapFrom(categoryDto));
+        Category updatedCategoryEntity = categoryService.partialUpdate(id, categoryMapper.mapFrom(categoryDto));
         return ResponseEntity.ok(categoryMapper.mapTo(updatedCategoryEntity));
     }
 

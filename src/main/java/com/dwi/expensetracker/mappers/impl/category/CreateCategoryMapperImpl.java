@@ -4,11 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
+import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.mappers.Mapper;
 
 @Component
-public class CreateCategoryMapperImpl implements Mapper<CategoryEntity, CreateCategoryDto> {
+public class CreateCategoryMapperImpl implements Mapper<Category, CreateCategoryDto> {
     private final ModelMapper modelMapper;
 
     public CreateCategoryMapperImpl(ModelMapper modelMapper) {
@@ -16,12 +16,12 @@ public class CreateCategoryMapperImpl implements Mapper<CategoryEntity, CreateCa
     }
 
     @Override
-    public CategoryEntity mapFrom(CreateCategoryDto createCategoryDto) {
-        return modelMapper.map(createCategoryDto, CategoryEntity.class);
+    public Category mapFrom(CreateCategoryDto createCategoryDto) {
+        return modelMapper.map(createCategoryDto, Category.class);
     }
 
     @Override
-    public CreateCategoryDto mapTo(CategoryEntity categoryEntity) {
+    public CreateCategoryDto mapTo(Category categoryEntity) {
         return modelMapper.map(categoryEntity, CreateCategoryDto.class);
     }
 

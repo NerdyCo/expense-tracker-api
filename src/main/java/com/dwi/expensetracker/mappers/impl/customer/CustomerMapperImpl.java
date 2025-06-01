@@ -4,11 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
+import com.dwi.expensetracker.domains.entities.Customer;
 import com.dwi.expensetracker.mappers.Mapper;
 
 @Component
-public class CustomerMapperImpl implements Mapper<CustomerEntity, CustomerDto> {
+public class CustomerMapperImpl implements Mapper<Customer, CustomerDto> {
 
     private final ModelMapper modelMapper;
 
@@ -17,12 +17,12 @@ public class CustomerMapperImpl implements Mapper<CustomerEntity, CustomerDto> {
     }
 
     @Override
-    public CustomerEntity mapFrom(CustomerDto customerDto) {
-        return modelMapper.map(customerDto, CustomerEntity.class);
+    public Customer mapFrom(CustomerDto customerDto) {
+        return modelMapper.map(customerDto, Customer.class);
     }
 
     @Override
-    public CustomerDto mapTo(CustomerEntity customerEntity) {
+    public CustomerDto mapTo(Customer customerEntity) {
         return modelMapper.map(customerEntity, CustomerDto.class);
     }
 

@@ -12,8 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
+import com.dwi.expensetracker.domains.entities.Category;
+import com.dwi.expensetracker.domains.entities.Customer;
 import com.dwi.expensetracker.services.CategoryService;
 
 @SpringBootTest
@@ -28,12 +28,12 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatCategoryCanBeCreatedAndRecalled() {
-        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
-        CategoryEntity category = TestDataUtil.createTestCategoryEntityA(customer);
+        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        Category category = TestDataUtil.createTestCategoryEntityA(customer);
 
-        CategoryEntity savedCategory = underTest.save(category);
+        Category savedCategory = underTest.save(category);
 
-        Optional<CategoryEntity> foundCategory = underTest.findOne(savedCategory.getId());
+        Optional<Category> foundCategory = underTest.findOne(savedCategory.getId());
 
         assertThat(foundCategory).isPresent();
         assertThat(foundCategory.get().getName()).isEqualTo("Food & Beverage");
@@ -42,41 +42,41 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatMultipleCategoriesCaBeCreatedAndRecalled() {
-        CustomerEntity customerA = TestDataUtil.createTestCustomerEntityA();
-        CustomerEntity customerB = TestDataUtil.createTestCustomerEntityB();
-        CustomerEntity customerC = TestDataUtil.createTestCustomerEntityC();
+        Customer customerA = TestDataUtil.createTestCustomerEntityA();
+        Customer customerB = TestDataUtil.createTestCustomerEntityB();
+        Customer customerC = TestDataUtil.createTestCustomerEntityC();
 
         underTest.save(TestDataUtil.createTestCategoryEntityA(customerA));
         underTest.save(TestDataUtil.createTestCategoryEntityB(customerB));
         underTest.save(TestDataUtil.createTestCategoryEntityC(customerC));
 
-        Page<CategoryEntity> result = underTest.findAll(PageRequest.of(0, 10));
+        Page<Category> result = underTest.findAll(PageRequest.of(0, 10));
 
         assertThat(result.getContent())
                 .hasSize(3)
-                .extracting(CategoryEntity::getName)
+                .extracting(Category::getName)
                 .containsExactlyInAnyOrder("Food & Beverage", "Transportation", "Hobby");
     }
 
     @Test
     public void testThatCategoryCanBePartiallyUpdated() {
-        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
-        CategoryEntity savedCategory = underTest.save(TestDataUtil.createTestCategoryEntityA(customer));
+        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        Category savedCategory = underTest.save(TestDataUtil.createTestCategoryEntityA(customer));
 
-        CategoryEntity updateCategory = CategoryEntity.builder()
+        Category updateCategory = Category.builder()
                 .name("updated name")
                 .build();
 
-        CategoryEntity updatedCategory = underTest.partialUpdate(savedCategory.getId(), updateCategory);
+        Category updatedCategory = underTest.partialUpdate(savedCategory.getId(), updateCategory);
 
         assertThat(updatedCategory.getName()).isEqualTo("updated name");
     }
 
     @Test
     public void testThatCategoryCanBeDeleted() {
-        CustomerEntity customer = TestDataUtil.createTestCustomerEntityA();
-        CategoryEntity category = TestDataUtil.createTestCategoryEntityB(customer);
-        CategoryEntity savedCategory = underTest.save(category);
+        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        Category category = TestDataUtil.createTestCategoryEntityB(customer);
+        Category savedCategory = underTest.save(category);
 
         underTest.delete(savedCategory.getId());
 

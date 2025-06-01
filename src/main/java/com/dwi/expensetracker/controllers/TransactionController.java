@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
-import com.dwi.expensetracker.domains.entities.TransactionEntity;
+import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.TransactionService;
 
@@ -26,12 +26,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-    private final Mapper<TransactionEntity, TransactionDto> transactionMapper;
+    private final Mapper<Transaction, TransactionDto> transactionMapper;
 
     @PostMapping
     public ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto transactionDto) {
-        TransactionEntity transactionEntity = transactionMapper.mapFrom(transactionDto);
-        TransactionEntity savedTransactionEntity = transactionService.save(transactionEntity);
+        Transaction transactionEntity = transactionMapper.mapFrom(transactionDto);
+        Transaction savedTransactionEntity = transactionService.save(transactionEntity);
         TransactionDto savedDto = transactionMapper.mapTo(savedTransactionEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
@@ -59,7 +59,7 @@ public class TransactionController {
         }
 
         transactionDto.setId(id);
-        TransactionEntity updatedTransactionEntity = transactionService.save(transactionMapper.mapFrom(transactionDto));
+        Transaction updatedTransactionEntity = transactionService.save(transactionMapper.mapFrom(transactionDto));
         return ResponseEntity.ok(transactionMapper.mapTo(updatedTransactionEntity));
     }
 
@@ -71,7 +71,7 @@ public class TransactionController {
             return ResponseEntity.notFound().build();
         }
 
-        TransactionEntity updatedTransactionEntity = transactionService.partialUpdate(
+        Transaction updatedTransactionEntity = transactionService.partialUpdate(
                 id,
                 transactionMapper.mapFrom(transactionDto));
         return ResponseEntity.ok(transactionMapper.mapTo(updatedTransactionEntity));

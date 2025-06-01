@@ -22,7 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
+import com.dwi.expensetracker.domains.entities.Customer;
 import com.dwi.expensetracker.repositories.CustomerRepository;
 import com.dwi.expensetracker.services.impl.CustomerServiceImpl;
 
@@ -31,7 +31,7 @@ public class CustomerServiceUnitTest {
 
     private static final Long CUSTOMER_ID = 1L;
 
-    private CustomerEntity customer;
+    private Customer customer;
 
     @Mock
     private CustomerRepository customerRepository;
@@ -44,7 +44,7 @@ public class CustomerServiceUnitTest {
 
     @BeforeEach
     public void setup() {
-        customer = new CustomerEntity();
+        customer = new Customer();
         customer.setId(CUSTOMER_ID);
     }
 
@@ -68,7 +68,7 @@ public class CustomerServiceUnitTest {
     public void shouldReturnEmptyWhenCustomerNotFound() {
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.empty());
 
-        Optional<CustomerEntity> result = customerService.findOne(CUSTOMER_ID);
+        Optional<Customer> result = customerService.findOne(CUSTOMER_ID);
 
         assertThat(result).isEmpty();
     }
@@ -76,12 +76,12 @@ public class CustomerServiceUnitTest {
     @Test
     public void shouldReturnPagedCustomers() {
         PageRequest pageable = PageRequest.of(0, 10);
-        List<CustomerEntity> customers = List.of(customer);
-        PageImpl<CustomerEntity> page = new PageImpl<>(customers);
+        List<Customer> customers = List.of(customer);
+        PageImpl<Customer> page = new PageImpl<>(customers);
 
         when(customerRepository.findAll(pageable)).thenReturn(page);
 
-        Page<CustomerEntity> foundCustomers = customerService.findAll(pageable);
+        Page<Customer> foundCustomers = customerService.findAll(pageable);
 
         assertThat(foundCustomers.getTotalElements()).isEqualTo(1);
     }
@@ -90,7 +90,7 @@ public class CustomerServiceUnitTest {
     public void shouldReturnCustomerWhenFound() {
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(customer));
 
-        Optional<CustomerEntity> foundCustomer = customerService.findOne(CUSTOMER_ID);
+        Optional<Customer> foundCustomer = customerService.findOne(CUSTOMER_ID);
 
         assertThat(foundCustomer).isPresent();
         assertThat(foundCustomer).containsSame(customer);
@@ -98,14 +98,14 @@ public class CustomerServiceUnitTest {
 
     @Test
     public void shouldPartialUpdateCustomer() {
-        CustomerEntity existingCustomer = TestDataUtil.createTestCustomerEntityA();
-        CustomerEntity incomingCustomer = TestDataUtil.createTestCustomerEntityB();
+        Customer existingCustomer = TestDataUtil.createTestCustomerEntityA();
+        Customer incomingCustomer = TestDataUtil.createTestCustomerEntityB();
 
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(existingCustomer));
         when(passwordEncoder.encode(incomingCustomer.getPassword())).thenReturn("hashedPass");
         when(customerRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        CustomerEntity updatedCustomer = customerService.partialUpdate(CUSTOMER_ID, incomingCustomer);
+        Customer updatedCustomer = customerService.partialUpdate(CUSTOMER_ID, incomingCustomer);
 
         assertThat(updatedCustomer.getUsername()).isEqualTo("teguh");
         assertThat(updatedCustomer.getPassword()).isEqualTo("hashedPass");
@@ -113,13 +113,13 @@ public class CustomerServiceUnitTest {
 
     @Test
     public void shouldNotUpdateAnythingWhenAllFieldAreNull() {
-        CustomerEntity existingCustomer = TestDataUtil.createTestCustomerEntityA();
-        CustomerEntity nullIncomingCustomer = new CustomerEntity();
+        Customer existingCustomer = TestDataUtil.createTestCustomerEntityA();
+        Customer nullIncomingCustomer = new Customer();
 
         when(customerRepository.findById(CUSTOMER_ID)).thenReturn(Optional.of(existingCustomer));
         when(customerRepository.save(any())).thenAnswer(i -> i.getArguments()[0]);
 
-        CustomerEntity updatedCustomer = customerService.partialUpdate(CUSTOMER_ID, nullIncomingCustomer);
+        Customer updatedCustomer = customerService.partialUpdate(CUSTOMER_ID, nullIncomingCustomer);
 
         assertThat(updatedCustomer.getUsername()).isEqualTo("kautsar");
         assertThat(updatedCustomer.getEmail()).isEqualTo("kautsar@gmail.com");
@@ -134,7 +134,7 @@ public class CustomerServiceUnitTest {
 
         when(customerRepository.save(customer)).thenReturn(customer);
 
-        CustomerEntity savedCustomer = customerService.save(customer);
+        Customer savedCustomer = customerService.save(customer);
 
         assertThat(savedCustomer).isNotNull();
         assertThat(savedCustomer.getUsername()).isEqualTo("test");

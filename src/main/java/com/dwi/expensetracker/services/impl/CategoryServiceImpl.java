@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
+import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.repositories.CategoryRepository;
 import com.dwi.expensetracker.services.CategoryService;
 
@@ -30,17 +30,17 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Page<CategoryEntity> findAll(Pageable pageable) {
+    public Page<Category> findAll(Pageable pageable) {
         return categoryRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<CategoryEntity> findOne(Long id) {
+    public Optional<Category> findOne(Long id) {
         return categoryRepository.findById(id);
     }
 
     @Override
-    public CategoryEntity partialUpdate(Long id, CategoryEntity categoryEntity) {
+    public Category partialUpdate(Long id, Category categoryEntity) {
         if (categoryEntity.getCustomer() != null) {
             throw new IllegalArgumentException("Customer cannot be changed");
         }
@@ -54,7 +54,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public CategoryEntity save(CategoryEntity categoryEntity) {
+    public Category save(Category categoryEntity) {
         return categoryRepository.save(categoryEntity);
     }
 

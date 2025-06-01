@@ -5,18 +5,18 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
+import com.dwi.expensetracker.domains.entities.Category;
 
 public interface CategoryService {
-    CategoryEntity save(CategoryEntity categoryEntity);
+    Category save(Category categoryEntity);
 
-    Page<CategoryEntity> findAll(Pageable pageable);
+    Page<Category> findAll(Pageable pageable);
 
-    Optional<CategoryEntity> findOne(Long id);
+    Optional<Category> findOne(Long id);
 
     boolean doesExist(Long id);
 
-    CategoryEntity partialUpdate(Long id, CategoryEntity categoryEntity);
+    Category partialUpdate(Long id, Category categoryEntity);
 
     void delete(Long id);
 }

@@ -8,32 +8,32 @@ import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
 import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
 import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
-import com.dwi.expensetracker.domains.entities.CategoryEntity;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
-import com.dwi.expensetracker.domains.entities.TransactionEntity;
+import com.dwi.expensetracker.domains.entities.Category;
+import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
 public class TestDataUtil {
         // customer
         // entity
-        public static CustomerEntity createTestCustomerEntityA() {
-                return CustomerEntity.builder()
+        public static Customer createTestCustomerEntityA() {
+                return Customer.builder()
                                 .email("kautsar@gmail.com")
                                 .username("kautsar")
                                 .password("kautsar123")
                                 .build();
         }
 
-        public static CustomerEntity createTestCustomerEntityB() {
-                return CustomerEntity.builder()
+        public static Customer createTestCustomerEntityB() {
+                return Customer.builder()
                                 .email("teguh@gmail.com")
                                 .username("teguh")
                                 .password("teguh123")
                                 .build();
         }
 
-        public static CustomerEntity createTestCustomerEntityC() {
-                return CustomerEntity.builder()
+        public static Customer createTestCustomerEntityC() {
+                return Customer.builder()
                                 .email("dwi@gmail.com")
                                 .username("dwi")
                                 .password("dwi123")
@@ -67,22 +67,22 @@ public class TestDataUtil {
 
         // category
         // entity
-        public static CategoryEntity createTestCategoryEntityA(final CustomerEntity customer) {
-                return CategoryEntity.builder()
+        public static Category createTestCategoryEntityA(final Customer customer) {
+                return Category.builder()
                                 .customer(customer)
                                 .name("Food & Beverage")
                                 .build();
         }
 
-        public static CategoryEntity createTestCategoryEntityB(final CustomerEntity customer) {
-                return CategoryEntity.builder()
+        public static Category createTestCategoryEntityB(final Customer customer) {
+                return Category.builder()
                                 .customer(customer)
                                 .name("Transportation")
                                 .build();
         }
 
-        public static CategoryEntity createTestCategoryEntityC(final CustomerEntity customer) {
-                return CategoryEntity.builder()
+        public static Category createTestCategoryEntityC(final Customer customer) {
+                return Category.builder()
                                 .customer(customer)
                                 .name("Hobby")
                                 .build();
@@ -112,10 +112,10 @@ public class TestDataUtil {
 
         // transaction
         // entity
-        public static TransactionEntity createTestTransactionEntityA(
-                        final CustomerEntity customer,
-                        final CategoryEntity category) {
-                return TransactionEntity.builder()
+        public static Transaction createTestTransactionEntityA(
+                        final Customer customer,
+                        final Category category) {
+                return Transaction.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("30000"))
@@ -125,10 +125,10 @@ public class TestDataUtil {
                                 .build();
         }
 
-        public static TransactionEntity createTestTransactionEntityB(
-                        final CustomerEntity customer,
-                        final CategoryEntity category) {
-                return TransactionEntity.builder()
+        public static Transaction createTestTransactionEntityB(
+                        final Customer customer,
+                        final Category category) {
+                return Transaction.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("100000"))
@@ -138,10 +138,10 @@ public class TestDataUtil {
                                 .build();
         }
 
-        public static TransactionEntity createTestTransactionEntityC(
-                        final CustomerEntity customer,
-                        final CategoryEntity category) {
-                return TransactionEntity.builder()
+        public static Transaction createTestTransactionEntityC(
+                        final Customer customer,
+                        final Category category) {
+                return Transaction.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("5000"))

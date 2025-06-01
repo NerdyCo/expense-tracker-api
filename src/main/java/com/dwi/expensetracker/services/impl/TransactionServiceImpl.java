@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.dwi.expensetracker.domains.entities.TransactionEntity;
+import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.repositories.TransactionRepository;
 import com.dwi.expensetracker.services.TransactionService;
 
@@ -30,17 +30,17 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public Page<TransactionEntity> findAll(Pageable pageable) {
+    public Page<Transaction> findAll(Pageable pageable) {
         return transactionRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<TransactionEntity> findOne(Long id) {
+    public Optional<Transaction> findOne(Long id) {
         return transactionRepository.findById(id);
     }
 
     @Override
-    public TransactionEntity partialUpdate(Long id, TransactionEntity transactionEntity) {
+    public Transaction partialUpdate(Long id, Transaction transactionEntity) {
         transactionEntity.setId(id);
 
         return transactionRepository.findById(id).map(existingTransaction -> {
@@ -53,7 +53,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public TransactionEntity save(TransactionEntity transactionEntity) {
+    public Transaction save(Transaction transactionEntity) {
         return transactionRepository.save(transactionEntity);
     }
 

@@ -5,18 +5,18 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.dwi.expensetracker.domains.entities.TransactionEntity;
+import com.dwi.expensetracker.domains.entities.Transaction;
 
 public interface TransactionService {
-    TransactionEntity save(TransactionEntity transactionEntity);
+    Transaction save(Transaction transactionEntity);
 
-    Page<TransactionEntity> findAll(Pageable pageable);
+    Page<Transaction> findAll(Pageable pageable);
 
-    Optional<TransactionEntity> findOne(Long id);
+    Optional<Transaction> findOne(Long id);
 
     boolean doesExist(Long id);
 
-    TransactionEntity partialUpdate(Long id, TransactionEntity transactionEntity);
+    Transaction partialUpdate(Long id, Transaction transactionEntity);
 
     void delete(Long id);
 }

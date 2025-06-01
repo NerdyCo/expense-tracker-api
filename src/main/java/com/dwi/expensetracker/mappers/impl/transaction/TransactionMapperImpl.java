@@ -4,11 +4,11 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
-import com.dwi.expensetracker.domains.entities.TransactionEntity;
+import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.mappers.Mapper;
 
 @Component
-public class TransactionMapperImpl implements Mapper<TransactionEntity, TransactionDto> {
+public class TransactionMapperImpl implements Mapper<Transaction, TransactionDto> {
     private final ModelMapper modelMapper;
 
     public TransactionMapperImpl(ModelMapper modelMapper) {
@@ -16,12 +16,12 @@ public class TransactionMapperImpl implements Mapper<TransactionEntity, Transact
     }
 
     @Override
-    public TransactionEntity mapFrom(TransactionDto transactionDto) {
-        return modelMapper.map(transactionDto, TransactionEntity.class);
+    public Transaction mapFrom(TransactionDto transactionDto) {
+        return modelMapper.map(transactionDto, Transaction.class);
     }
 
     @Override
-    public TransactionDto mapTo(TransactionEntity transactionEntity) {
+    public TransactionDto mapTo(Transaction transactionEntity) {
         return modelMapper.map(transactionEntity, TransactionDto.class);
     }
 

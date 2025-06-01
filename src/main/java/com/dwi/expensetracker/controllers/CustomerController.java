@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
 import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
-import com.dwi.expensetracker.domains.entities.CustomerEntity;
+import com.dwi.expensetracker.domains.entities.Customer;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.CustomerService;
 
@@ -27,13 +27,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CustomerController {
     private final CustomerService customerService;
-    private final Mapper<CustomerEntity, CustomerDto> customerMapper;
-    private final Mapper<CustomerEntity, CreateCustomerDto> createCustomMapper;
+    private final Mapper<Customer, CustomerDto> customerMapper;
+    private final Mapper<Customer, CreateCustomerDto> createCustomMapper;
 
     @PostMapping
     public ResponseEntity<CreateCustomerDto> createCustomer(@RequestBody CreateCustomerDto createCustomerDto) {
-        CustomerEntity customerEntity = createCustomMapper.mapFrom(createCustomerDto);
-        CustomerEntity savedCustomerEntity = customerService.save(customerEntity);
+        Customer customerEntity = createCustomMapper.mapFrom(createCustomerDto);
+        Customer savedCustomerEntity = customerService.save(customerEntity);
         CreateCustomerDto savedDto = createCustomMapper.mapTo(savedCustomerEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
@@ -59,7 +59,7 @@ public class CustomerController {
         }
 
         customerDto.setId(id);
-        CustomerEntity updatedCustomerEntity = customerService.save(customerMapper.mapFrom(customerDto));
+        Customer updatedCustomerEntity = customerService.save(customerMapper.mapFrom(customerDto));
         return ResponseEntity.ok(customerMapper.mapTo(updatedCustomerEntity));
     }
 
@@ -71,7 +71,7 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
 
-        CustomerEntity updatedCustomerEntity = customerService.partialUpdate(id, customerMapper.mapFrom(customerDto));
+        Customer updatedCustomerEntity = customerService.partialUpdate(id, customerMapper.mapFrom(customerDto));
         return ResponseEntity.ok(customerMapper.mapTo(updatedCustomerEntity));
     }
 
