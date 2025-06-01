@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
+import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
 import com.dwi.expensetracker.domains.entities.CategoryEntity;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.CategoryService;
@@ -27,12 +28,13 @@ import lombok.RequiredArgsConstructor;
 public class CategoryController {
     private final CategoryService categoryService;
     private final Mapper<CategoryEntity, CategoryDto> categoryMapper;
+    private final Mapper<CategoryEntity, CreateCategoryDto> createCategoryMapper;
 
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@RequestBody CategoryDto categoryDto) {
-        CategoryEntity categoryEntity = categoryMapper.mapFrom(categoryDto);
+    public ResponseEntity<CreateCategoryDto> createCategory(@RequestBody CreateCategoryDto createCategoryDto) {
+        CategoryEntity categoryEntity = createCategoryMapper.mapFrom(createCategoryDto);
         CategoryEntity savedCategoryEntity = categoryService.save(categoryEntity);
-        CategoryDto savedDto = categoryMapper.mapTo(savedCategoryEntity);
+        CreateCategoryDto savedDto = createCategoryMapper.mapTo(savedCategoryEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
 

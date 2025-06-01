@@ -26,7 +26,9 @@ public class CustomerControllerIntegrationTest {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public CustomerControllerIntegrationTest(MockMvc mockMvc, CustomerService customerService,
+    public CustomerControllerIntegrationTest(
+            MockMvc mockMvc,
+            CustomerService customerService,
             ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
         this.customerService = customerService;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
+import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
 import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
 import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
@@ -88,22 +89,22 @@ public class TestDataUtil {
         }
 
         // dto
-        public static CategoryDto createTestCategoryDtoA(final CustomerDto customer) {
-                return CategoryDto.builder()
+        public static CreateCategoryDto createTestCategoryDtoA(final CreateCustomerDto customer) {
+                return CreateCategoryDto.builder()
                                 .customer(customer)
                                 .name("Food & Beverage")
                                 .build();
         }
 
-        public static CategoryDto createTestCategoryDtoB(final CustomerDto customer) {
-                return CategoryDto.builder()
+        public static CreateCategoryDto createTestCategoryDtoB(final CreateCustomerDto customer) {
+                return CreateCategoryDto.builder()
                                 .customer(customer)
                                 .name("Transportation")
                                 .build();
         }
 
-        public static CategoryDto createTestCategoryDtoC(final CustomerDto customer) {
-                return CategoryDto.builder()
+        public static CreateCategoryDto createTestCategoryDtoC(final CreateCustomerDto customer) {
+                return CreateCategoryDto.builder()
                                 .customer(customer)
                                 .name("Hobby")
                                 .build();
