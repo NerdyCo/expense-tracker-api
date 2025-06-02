@@ -9,63 +9,71 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.dwi.expensetracker.domains.entities.User;
+import com.dwi.expensetracker.exceptions.DuplicateResourceException;
 import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.services.UserService;
 
-@Service
-public class UserServiceImpl implements UserService {
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 
+@Service
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+    @Override
+    @Transactional
+    public User create(User user) {
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new DuplicateResourceException("Email is already in use");
+        }
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new DuplicateResourceException("Username is already in use");
+        }
+
+        String rawPassword = user.getPassword();
+        if (rawPassword != null && !rawPassword.isBlank()) {
+            user.setPassword(passwordEncoder.encode(rawPassword));
+        }
+
+        return userRepository.save(user);
     }
 
     @Override
-    public void delete(UUID id) {
-        userRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean doesExist(UUID id) {
-        return userRepository.existsById(id);
-    }
-
-    @Override
-    public Page<User> findAll(Pageable pageable) {
+    public Page<User> getAll(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<User> findOne(UUID id) {
+    public Optional<User> getById(UUID id) {
         return userRepository.findById(id);
     }
 
     @Override
-    public User partialUpdate(UUID id, User customerEntity) {
-        customerEntity.setId(id);
+    @Transactional
+    public User updatePartial(UUID id, User updateRequest) {
+        return userRepository.findById(id)
+                .map(existing -> {
+                    Optional.ofNullable(updateRequest.getUsername()).ifPresent(existing::setUsername);
+                    Optional.ofNullable(updateRequest.getEmail()).ifPresent(existing::setEmail);
+                    Optional.ofNullable(updateRequest.getPassword())
+                            .filter(pwd -> !pwd.isBlank())
+                            .map(passwordEncoder::encode)
+                            .ifPresent(existing::setPassword);
 
-        return userRepository.findById(id).map(existingCustomer -> {
-            Optional.ofNullable(customerEntity.getUsername()).ifPresent(existingCustomer::setUsername);
-            Optional.ofNullable(customerEntity.getEmail()).ifPresent(existingCustomer::setEmail);
-            Optional.ofNullable(customerEntity.getPassword()).ifPresent(rawPassword -> {
-                String hashedPassword = passwordEncoder.encode(rawPassword);
-                existingCustomer.setPassword(hashedPassword);
-            });
-            return userRepository.save(existingCustomer);
-        }).orElseThrow(() -> new RuntimeException("Customer does not exist"));
+                    return userRepository.save(existing);
+                }).orElseThrow(() -> new EntityNotFoundException("User not found with ID " + id));
     }
 
     @Override
-    public User save(User customerEntity) {
-        if (customerEntity.getPassword() != null) {
-            String hashedPassword = passwordEncoder.encode(customerEntity.getPassword());
-            customerEntity.setPassword(hashedPassword);
+    @Transactional
+    public void deleteById(UUID id) {
+        if (!userRepository.existsById(id)) {
+            throw new EntityNotFoundException("User not found with ID " + id);
         }
 
-        return userRepository.save(customerEntity);
+        userRepository.deleteById(id);
     }
-
 }

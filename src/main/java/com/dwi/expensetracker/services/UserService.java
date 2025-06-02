@@ -9,15 +9,13 @@ import org.springframework.data.domain.Pageable;
 import com.dwi.expensetracker.domains.entities.User;
 
 public interface UserService {
-    User save(User customerEntity);
+    User create(User user);
 
-    Page<User> findAll(Pageable pageable);
+    Page<User> getAll(Pageable pageable);
 
-    Optional<User> findOne(UUID id);
+    Optional<User> getById(UUID id);
 
-    boolean doesExist(UUID id);
+    User updatePartial(UUID id, User user);
 
-    User partialUpdate(UUID id, User customerEntity);
-
-    void delete(UUID id);
+    void deleteById(UUID id);
 }
