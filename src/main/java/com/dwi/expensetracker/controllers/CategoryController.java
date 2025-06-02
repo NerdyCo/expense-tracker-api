@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
-import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.CategoryService;
@@ -27,19 +27,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final Mapper<Category, CategoryDto> categoryMapper;
-    private final Mapper<Category, CreateCategoryDto> createCategoryMapper;
+    private final Mapper<Category, CategoryBaseDto> categoryMapper;
+    private final Mapper<Category, CategoryRequestDto> createCategoryMapper;
 
     @PostMapping
-    public ResponseEntity<CreateCategoryDto> createCategory(@RequestBody CreateCategoryDto createCategoryDto) {
+    public ResponseEntity<CategoryRequestDto> createCategory(@RequestBody CategoryRequestDto createCategoryDto) {
         Category categoryEntity = createCategoryMapper.mapFrom(createCategoryDto);
         Category savedCategoryEntity = categoryService.save(categoryEntity);
-        CreateCategoryDto savedDto = createCategoryMapper.mapTo(savedCategoryEntity);
+        CategoryRequestDto savedDto = createCategoryMapper.mapTo(savedCategoryEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategory(@PathVariable Long id) {
+    public ResponseEntity<CategoryBaseDto> getCategory(@PathVariable Long id) {
         return categoryService.findOne(id)
                 .map(categoryMapper::mapTo)
                 .map(ResponseEntity::ok)
@@ -47,15 +47,15 @@ public class CategoryController {
     }
 
     @GetMapping
-    public Page<CategoryDto> getAllCategories(Pageable pageable) {
+    public Page<CategoryBaseDto> getAllCategories(Pageable pageable) {
         return categoryService.findAll(pageable)
                 .map(categoryMapper::mapTo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CategoryDto> fullUpdateCategory(
+    public ResponseEntity<CategoryBaseDto> fullUpdateCategory(
             @PathVariable Long id,
-            @RequestBody CategoryDto categoryDto) {
+            @RequestBody CategoryBaseDto categoryDto) {
         if (!categoryService.doesExist(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -66,9 +66,9 @@ public class CategoryController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<CategoryDto> partialUpdateCategory(
+    public ResponseEntity<CategoryBaseDto> partialUpdateCategory(
             @PathVariable Long id,
-            @RequestBody CategoryDto categoryDto) {
+            @RequestBody CategoryBaseDto categoryDto) {
         if (!categoryService.doesExist(id)) {
             return ResponseEntity.notFound().build();
         }

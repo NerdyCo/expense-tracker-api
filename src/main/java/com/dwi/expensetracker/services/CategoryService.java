@@ -1,6 +1,7 @@
 package com.dwi.expensetracker.services;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,11 +13,11 @@ public interface CategoryService {
 
     Page<Category> findAll(Pageable pageable);
 
-    Optional<Category> findOne(Long id);
+    Optional<Category> findOne(UUID id);
 
-    boolean doesExist(Long id);
+    boolean doesExist(UUID id);
 
-    Category partialUpdate(Long id, Category categoryEntity);
+    Category partialUpdate(UUID id, Category categoryEntity);
 
-    void delete(Long id);
+    void delete(UUID id);
 }

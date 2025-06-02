@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.TransactionService;
@@ -26,18 +26,18 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-    private final Mapper<Transaction, TransactionDto> transactionMapper;
+    private final Mapper<Transaction, TransactionBaseDto> transactionMapper;
 
     @PostMapping
-    public ResponseEntity<TransactionDto> createTransaction(@RequestBody TransactionDto transactionDto) {
+    public ResponseEntity<TransactionBaseDto> createTransaction(@RequestBody TransactionBaseDto transactionDto) {
         Transaction transactionEntity = transactionMapper.mapFrom(transactionDto);
         Transaction savedTransactionEntity = transactionService.save(transactionEntity);
-        TransactionDto savedDto = transactionMapper.mapTo(savedTransactionEntity);
+        TransactionBaseDto savedDto = transactionMapper.mapTo(savedTransactionEntity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TransactionDto> getTransaction(@PathVariable Long id) {
+    public ResponseEntity<TransactionBaseDto> getTransaction(@PathVariable Long id) {
         return transactionService.findOne(id)
                 .map(transactionMapper::mapTo)
                 .map(ResponseEntity::ok)
@@ -45,15 +45,15 @@ public class TransactionController {
     }
 
     @GetMapping
-    public Page<TransactionDto> getAllTransactions(Pageable pageable) {
+    public Page<TransactionBaseDto> getAllTransactions(Pageable pageable) {
         return transactionService.findAll(pageable)
                 .map(transactionMapper::mapTo);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TransactionDto> fullUpdateTransaction(
+    public ResponseEntity<TransactionBaseDto> fullUpdateTransaction(
             @PathVariable Long id,
-            @RequestBody TransactionDto transactionDto) {
+            @RequestBody TransactionBaseDto transactionDto) {
         if (!transactionService.doesExist(id)) {
             return ResponseEntity.notFound().build();
         }
@@ -64,9 +64,9 @@ public class TransactionController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TransactionDto> partialUpdateTrasaction(
+    public ResponseEntity<TransactionBaseDto> partialUpdateTrasaction(
             @PathVariable Long id,
-            @RequestBody TransactionDto transactionDto) {
+            @RequestBody TransactionBaseDto transactionDto) {
         if (!transactionService.doesExist(id)) {
             return ResponseEntity.notFound().build();
         }

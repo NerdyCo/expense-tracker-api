@@ -17,10 +17,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
-import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
+import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.services.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -44,8 +44,8 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testCreateCategoryReturns201() throws Exception {
-                CreateCustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
-                CreateCategoryDto categoryDto = TestDataUtil.createTestCategoryDtoA(customerDto);
+                UserRequestDto customerDto = TestDataUtil.createTestCustomerDtoA();
+                CategoryRequestDto categoryDto = TestDataUtil.createTestCategoryDtoA(customerDto);
                 String categoryJson = objectMapper.writeValueAsString(categoryDto);
 
                 mockMvc.perform(post("/api/categories")
@@ -56,8 +56,8 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testCreateCategoryReturnsSavedCategory() throws Exception {
-                CreateCustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
-                CreateCategoryDto categoryDto = TestDataUtil.createTestCategoryDtoA(customerDto);
+                UserRequestDto customerDto = TestDataUtil.createTestCustomerDtoA();
+                CategoryRequestDto categoryDto = TestDataUtil.createTestCategoryDtoA(customerDto);
                 String categoryJson = objectMapper.writeValueAsString(categoryDto);
 
                 mockMvc.perform(post("/api/categories")
@@ -73,7 +73,7 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testGetCategoryReturns200WhenExists() throws Exception {
-                Customer customerEntity = TestDataUtil.createTestCustomerEntityA();
+                User customerEntity = TestDataUtil.createTestCustomerEntityA();
                 Category categoryEntity = categoryService.save(TestDataUtil.createTestCategoryEntityA(customerEntity));
 
                 mockMvc.perform(get("/api/categories/" + categoryEntity.getId()))
@@ -82,7 +82,7 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testThatCategoryReturnsCorrectData() throws Exception {
-                Customer customerEntity = TestDataUtil.createTestCustomerEntityA();
+                User customerEntity = TestDataUtil.createTestCustomerEntityA();
                 Category categoryEntity = categoryService.save(TestDataUtil.createTestCategoryEntityA(customerEntity));
 
                 mockMvc.perform(get("/api/categories/" + categoryEntity.getId()))
@@ -102,10 +102,10 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testFullUpdateReturns200AndUpdatedData() throws Exception {
-                Customer customerEntity = TestDataUtil.createTestCustomerEntityA();
+                User customerEntity = TestDataUtil.createTestCustomerEntityA();
                 Category savedCategoryEntity = categoryService
                                 .save(TestDataUtil.createTestCategoryEntityA(customerEntity));
-                CreateCategoryDto updateCategory = TestDataUtil.createTestCategoryDtoA(null);
+                CategoryRequestDto updateCategory = TestDataUtil.createTestCategoryDtoA(null);
                 updateCategory.setName("UPDATED");
                 String categoryJson = objectMapper.writeValueAsString(updateCategory);
 
@@ -118,8 +118,8 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testFullUpdateReturns404WhenNotExists() throws Exception {
-                CreateCustomerDto customerDto = TestDataUtil.createTestCustomerDtoA();
-                CreateCategoryDto categoryDto = TestDataUtil.createTestCategoryDtoA(customerDto);
+                UserRequestDto customerDto = TestDataUtil.createTestCustomerDtoA();
+                CategoryRequestDto categoryDto = TestDataUtil.createTestCategoryDtoA(customerDto);
                 String categoryJson = objectMapper.writeValueAsString(categoryDto);
 
                 mockMvc.perform(put("/api/categories/999")
@@ -130,10 +130,10 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testPartialUpdateReturns200AndUpdatedField() throws Exception {
-                Customer customerEntity = TestDataUtil.createTestCustomerEntityA();
+                User customerEntity = TestDataUtil.createTestCustomerEntityA();
                 Category savedCategoryEntity = categoryService
                                 .save(TestDataUtil.createTestCategoryEntityA(customerEntity));
-                CreateCategoryDto updateCategory = TestDataUtil.createTestCategoryDtoA(null);
+                CategoryRequestDto updateCategory = TestDataUtil.createTestCategoryDtoA(null);
                 updateCategory.setName("UPDATED");
                 String categoryJson = objectMapper.writeValueAsString(updateCategory);
 
@@ -146,7 +146,7 @@ public class CategoryControllerIntegrationTest {
 
         @Test
         public void testDeleteCategoryReturns204() throws Exception {
-                Customer customerEntity = TestDataUtil.createTestCustomerEntityA();
+                User customerEntity = TestDataUtil.createTestCustomerEntityA();
                 Category categoryEntity = categoryService.save(TestDataUtil.createTestCategoryEntityA(customerEntity));
 
                 mockMvc.perform(delete("/api/categories/" + categoryEntity.getId()))

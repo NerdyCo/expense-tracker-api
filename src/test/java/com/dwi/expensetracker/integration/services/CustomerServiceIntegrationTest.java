@@ -13,19 +13,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.entities.Customer;
-import com.dwi.expensetracker.services.CustomerService;
+import com.dwi.expensetracker.domains.entities.User;
+import com.dwi.expensetracker.services.UserService;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CustomerServiceIntegrationTest {
 
-    private final CustomerService underTest;
+    private final UserService underTest;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public CustomerServiceIntegrationTest(
-            CustomerService underTest,
+            UserService underTest,
             PasswordEncoder passwordEncoder) {
         this.underTest = underTest;
         this.passwordEncoder = passwordEncoder;
@@ -33,10 +33,10 @@ public class CustomerServiceIntegrationTest {
 
     @Test
     public void testThatCustomerCanBeCreatedAndRecalled() {
-        Customer customer = TestDataUtil.createTestCustomerEntityA();
-        Customer savedCustomer = underTest.save(customer);
+        User customer = TestDataUtil.createTestCustomerEntityA();
+        User savedCustomer = underTest.save(customer);
 
-        Optional<Customer> foundCustomer = underTest.findOne(savedCustomer.getId());
+        Optional<User> foundCustomer = underTest.findOne(savedCustomer.getId());
 
         assertThat(foundCustomer).isPresent();
         assertThat(foundCustomer.get().getEmail()).isEqualTo("kautsar@gmail.com");
@@ -46,31 +46,31 @@ public class CustomerServiceIntegrationTest {
 
     @Test
     public void testThatMultipleCustomersCanBeCreatedAndRecalled() {
-        Customer customerA = TestDataUtil.createTestCustomerEntityA();
-        Customer customerB = TestDataUtil.createTestCustomerEntityB();
-        Customer customerC = TestDataUtil.createTestCustomerEntityC();
+        User customerA = TestDataUtil.createTestCustomerEntityA();
+        User customerB = TestDataUtil.createTestCustomerEntityB();
+        User customerC = TestDataUtil.createTestCustomerEntityC();
 
         underTest.save(customerA);
         underTest.save(customerB);
         underTest.save(customerC);
 
-        Page<Customer> result = underTest.findAll(PageRequest.of(0, 10));
+        Page<User> result = underTest.findAll(PageRequest.of(0, 10));
 
         assertThat(result.getContent())
                 .hasSize(3)
-                .extracting(Customer::getUsername)
+                .extracting(User::getUsername)
                 .containsExactlyInAnyOrder("kautsar", "dwi", "teguh");
     }
 
     @Test
     public void testThatCustomerCanBePartiallyUpdated() {
-        Customer savedCustomer = underTest.save(TestDataUtil.createTestCustomerEntityA());
-        Customer newCustomer = Customer.builder()
+        User savedCustomer = underTest.save(TestDataUtil.createTestCustomerEntityA());
+        User newCustomer = User.builder()
                 .username("updated")
                 .password("secret")
                 .build();
 
-        Customer updatedCustomer = underTest.partialUpdate(savedCustomer.getId(), newCustomer);
+        User updatedCustomer = underTest.partialUpdate(savedCustomer.getId(), newCustomer);
 
         assertThat(updatedCustomer.getUsername()).isEqualTo("updated");
         assertThat(updatedCustomer.getPassword()).isNotEqualTo("secret"); // because it's encoded
@@ -78,7 +78,7 @@ public class CustomerServiceIntegrationTest {
 
     @Test
     public void testThatCustomerCanBeDeleted() {
-        Customer savedcustomer = underTest.save(TestDataUtil.createTestCustomerEntityA());
+        User savedcustomer = underTest.save(TestDataUtil.createTestCustomerEntityA());
         underTest.delete(savedcustomer.getId());
 
         boolean result = underTest.doesExist(savedcustomer.getId());

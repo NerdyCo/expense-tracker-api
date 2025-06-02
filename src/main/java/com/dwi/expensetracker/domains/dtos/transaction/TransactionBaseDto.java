@@ -3,8 +3,8 @@ package com.dwi.expensetracker.domains.dtos.transaction;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
-import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
+import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
 import lombok.AllArgsConstructor;
@@ -16,12 +16,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TransactionDto {
+public class TransactionBaseDto {
+
     private Long id;
 
-    private CustomerDto customer;
+    private UserBaseDto customer;
 
-    private CategoryDto category;
+    private CategoryBaseDto category;
 
     private BigDecimal amount;
 

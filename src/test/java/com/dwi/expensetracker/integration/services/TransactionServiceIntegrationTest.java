@@ -14,7 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 import com.dwi.expensetracker.services.TransactionService;
@@ -32,7 +32,7 @@ public class TransactionServiceIntegrationTest {
 
         @Test
         public void testThatTransactionCanBeCreatedAndRecalled() {
-                Customer customer = TestDataUtil.createTestCustomerEntityA();
+                User customer = TestDataUtil.createTestCustomerEntityA();
                 Category category = TestDataUtil.createTestCategoryEntityA(customer);
                 Transaction savedTransaction = underTest
                                 .save(TestDataUtil.createTestTransactionEntityA(customer, category));
@@ -46,9 +46,9 @@ public class TransactionServiceIntegrationTest {
 
         @Test
         public void testThatMultipleTransactionCanBeCreatedAndRecalled() {
-                Customer customerA = TestDataUtil.createTestCustomerEntityA();
-                Customer customerB = TestDataUtil.createTestCustomerEntityB();
-                Customer customerC = TestDataUtil.createTestCustomerEntityC();
+                User customerA = TestDataUtil.createTestCustomerEntityA();
+                User customerB = TestDataUtil.createTestCustomerEntityB();
+                User customerC = TestDataUtil.createTestCustomerEntityC();
                 Category categoryA = TestDataUtil.createTestCategoryEntityA(customerA);
                 Category categoryB = TestDataUtil.createTestCategoryEntityB(customerB);
                 Category categoryC = TestDataUtil.createTestCategoryEntityC(customerC);
@@ -68,7 +68,7 @@ public class TransactionServiceIntegrationTest {
 
         @Test
         public void testThatTransactionCanBePartiallyUpdated() {
-                Customer customer = TestDataUtil.createTestCustomerEntityA();
+                User customer = TestDataUtil.createTestCustomerEntityA();
                 Category category = TestDataUtil.createTestCategoryEntityA(customer);
                 Transaction savedTransaction = underTest
                                 .save(TestDataUtil.createTestTransactionEntityA(customer, category));
@@ -85,7 +85,7 @@ public class TransactionServiceIntegrationTest {
 
         @Test
         public void testThatTransactionCanBeDeleted() {
-                Customer customer = TestDataUtil.createTestCustomerEntityA();
+                User customer = TestDataUtil.createTestCustomerEntityA();
                 Category category = TestDataUtil.createTestCategoryEntityA(customer);
                 Transaction savedTransaction = underTest
                                 .save(TestDataUtil.createTestTransactionEntityA(customer, category));

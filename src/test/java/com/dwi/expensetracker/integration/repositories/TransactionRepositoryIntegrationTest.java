@@ -11,22 +11,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.repositories.CategoryRepository;
-import com.dwi.expensetracker.repositories.CustomerRepository;
+import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.repositories.TransactionRepository;
 
 @DataJpaTest
 public class TransactionRepositoryIntegrationTest {
     private final TransactionRepository underTest;
-    private final CustomerRepository customerRepository;
+    private final UserRepository customerRepository;
     private final CategoryRepository categoryRepository;
 
     @Autowired
     public TransactionRepositoryIntegrationTest(
             TransactionRepository underTest,
-            CustomerRepository customerRepository,
+            UserRepository customerRepository,
             CategoryRepository categoryRepository) {
         this.underTest = underTest;
         this.customerRepository = customerRepository;
@@ -35,7 +35,7 @@ public class TransactionRepositoryIntegrationTest {
 
     @Test
     public void testThatTransactionCanBeCreatedAndRecalled() {
-        Customer customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
+        User customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
         Category category = categoryRepository.save(TestDataUtil.createTestCategoryEntityA(customer));
         Transaction transaction = TestDataUtil.createTestTransactionEntityA(customer, category);
 
@@ -51,7 +51,7 @@ public class TransactionRepositoryIntegrationTest {
 
     @Test
     public void testThatMultipleTransactionsCanBeCreatedAndRecalled() {
-        Customer customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
+        User customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
         Category category = categoryRepository.save(TestDataUtil.createTestCategoryEntityA(customer));
 
         Transaction transactionA = TestDataUtil.createTestTransactionEntityA(customer, category);

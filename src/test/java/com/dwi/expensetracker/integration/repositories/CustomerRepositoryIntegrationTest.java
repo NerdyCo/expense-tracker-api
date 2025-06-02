@@ -10,24 +10,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.dwi.expensetracker.TestDataUtil;
-import com.dwi.expensetracker.domains.entities.Customer;
-import com.dwi.expensetracker.repositories.CustomerRepository;
+import com.dwi.expensetracker.domains.entities.User;
+import com.dwi.expensetracker.repositories.UserRepository;
 
 @DataJpaTest
 public class CustomerRepositoryIntegrationTest {
-    private final CustomerRepository underTest;
+    private final UserRepository underTest;
 
     @Autowired
-    public CustomerRepositoryIntegrationTest(CustomerRepository underTest) {
+    public CustomerRepositoryIntegrationTest(UserRepository underTest) {
         this.underTest = underTest;
     }
 
     @Test
     public void testThatCustomerCanBeCreatedAndRecalled() {
-        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        User customer = TestDataUtil.createTestCustomerEntityA();
         underTest.save(customer);
 
-        Optional<Customer> result = underTest.findById(customer.getId());
+        Optional<User> result = underTest.findById(customer.getId());
 
         assertThat(result).isPresent();
         assertThat(result.get()).isEqualTo(customer);
@@ -35,12 +35,12 @@ public class CustomerRepositoryIntegrationTest {
 
     @Test
     public void testThatMultipleCustomersCanBeCreatedAndRecalled() {
-        Customer customerA = TestDataUtil.createTestCustomerEntityA();
-        Customer customerB = TestDataUtil.createTestCustomerEntityB();
+        User customerA = TestDataUtil.createTestCustomerEntityA();
+        User customerB = TestDataUtil.createTestCustomerEntityB();
 
         underTest.saveAll(List.of(customerA, customerB));
 
-        Iterable<Customer> result = underTest.findAll();
+        Iterable<User> result = underTest.findAll();
 
         assertThat(result)
                 .hasSize(2)

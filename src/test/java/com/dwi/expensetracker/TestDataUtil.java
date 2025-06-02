@@ -3,37 +3,37 @@ package com.dwi.expensetracker;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.dwi.expensetracker.domains.dtos.category.CategoryDto;
-import com.dwi.expensetracker.domains.dtos.category.CreateCategoryDto;
-import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
-import com.dwi.expensetracker.domains.dtos.customer.CustomerDto;
-import com.dwi.expensetracker.domains.dtos.transaction.TransactionDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
+import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
+import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
 public class TestDataUtil {
         // customer
         // entity
-        public static Customer createTestCustomerEntityA() {
-                return Customer.builder()
+        public static User createTestCustomerEntityA() {
+                return User.builder()
                                 .email("kautsar@gmail.com")
                                 .username("kautsar")
                                 .password("kautsar123")
                                 .build();
         }
 
-        public static Customer createTestCustomerEntityB() {
-                return Customer.builder()
+        public static User createTestCustomerEntityB() {
+                return User.builder()
                                 .email("teguh@gmail.com")
                                 .username("teguh")
                                 .password("teguh123")
                                 .build();
         }
 
-        public static Customer createTestCustomerEntityC() {
-                return Customer.builder()
+        public static User createTestCustomerEntityC() {
+                return User.builder()
                                 .email("dwi@gmail.com")
                                 .username("dwi")
                                 .password("dwi123")
@@ -41,24 +41,24 @@ public class TestDataUtil {
         }
 
         // dto
-        public static CreateCustomerDto createTestCustomerDtoA() {
-                return CreateCustomerDto.builder()
+        public static UserRequestDto createTestCustomerDtoA() {
+                return UserRequestDto.builder()
                                 .email("kautsar@gmail.com")
                                 .username("kautsar")
                                 .password("kautsar123")
                                 .build();
         }
 
-        public static CreateCustomerDto createTestCustomerDtoB() {
-                return CreateCustomerDto.builder()
+        public static UserRequestDto createTestCustomerDtoB() {
+                return UserRequestDto.builder()
                                 .email("teguh@gmail.com")
                                 .username("teguh")
                                 .password("teguh123")
                                 .build();
         }
 
-        public static CreateCustomerDto createTestCustomerDtoC() {
-                return CreateCustomerDto.builder()
+        public static UserRequestDto createTestCustomerDtoC() {
+                return UserRequestDto.builder()
                                 .email("dwi@gmail.com")
                                 .username("dwi")
                                 .password("dwi123")
@@ -67,21 +67,21 @@ public class TestDataUtil {
 
         // category
         // entity
-        public static Category createTestCategoryEntityA(final Customer customer) {
+        public static Category createTestCategoryEntityA(final User customer) {
                 return Category.builder()
                                 .customer(customer)
                                 .name("Food & Beverage")
                                 .build();
         }
 
-        public static Category createTestCategoryEntityB(final Customer customer) {
+        public static Category createTestCategoryEntityB(final User customer) {
                 return Category.builder()
                                 .customer(customer)
                                 .name("Transportation")
                                 .build();
         }
 
-        public static Category createTestCategoryEntityC(final Customer customer) {
+        public static Category createTestCategoryEntityC(final User customer) {
                 return Category.builder()
                                 .customer(customer)
                                 .name("Hobby")
@@ -89,22 +89,22 @@ public class TestDataUtil {
         }
 
         // dto
-        public static CreateCategoryDto createTestCategoryDtoA(final CreateCustomerDto customer) {
-                return CreateCategoryDto.builder()
+        public static CategoryRequestDto createTestCategoryDtoA(final UserRequestDto customer) {
+                return CategoryRequestDto.builder()
                                 .customer(customer)
                                 .name("Food & Beverage")
                                 .build();
         }
 
-        public static CreateCategoryDto createTestCategoryDtoB(final CreateCustomerDto customer) {
-                return CreateCategoryDto.builder()
+        public static CategoryRequestDto createTestCategoryDtoB(final UserRequestDto customer) {
+                return CategoryRequestDto.builder()
                                 .customer(customer)
                                 .name("Transportation")
                                 .build();
         }
 
-        public static CreateCategoryDto createTestCategoryDtoC(final CreateCustomerDto customer) {
-                return CreateCategoryDto.builder()
+        public static CategoryRequestDto createTestCategoryDtoC(final UserRequestDto customer) {
+                return CategoryRequestDto.builder()
                                 .customer(customer)
                                 .name("Hobby")
                                 .build();
@@ -113,7 +113,7 @@ public class TestDataUtil {
         // transaction
         // entity
         public static Transaction createTestTransactionEntityA(
-                        final Customer customer,
+                        final User customer,
                         final Category category) {
                 return Transaction.builder()
                                 .customer(customer)
@@ -126,7 +126,7 @@ public class TestDataUtil {
         }
 
         public static Transaction createTestTransactionEntityB(
-                        final Customer customer,
+                        final User customer,
                         final Category category) {
                 return Transaction.builder()
                                 .customer(customer)
@@ -139,7 +139,7 @@ public class TestDataUtil {
         }
 
         public static Transaction createTestTransactionEntityC(
-                        final Customer customer,
+                        final User customer,
                         final Category category) {
                 return Transaction.builder()
                                 .customer(customer)
@@ -152,10 +152,10 @@ public class TestDataUtil {
         }
 
         // dto
-        public static TransactionDto createTestTransactionDtoA(
-                        final CustomerDto customer,
-                        final CategoryDto category) {
-                return TransactionDto.builder()
+        public static TransactionBaseDto createTestTransactionDtoA(
+                        final UserBaseDto customer,
+                        final CategoryBaseDto category) {
+                return TransactionBaseDto.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("30000"))
@@ -165,10 +165,10 @@ public class TestDataUtil {
                                 .build();
         }
 
-        public static TransactionDto createTestTransactionDtoB(
-                        final CustomerDto customer,
-                        final CategoryDto category) {
-                return TransactionDto.builder()
+        public static TransactionBaseDto createTestTransactionDtoB(
+                        final UserBaseDto customer,
+                        final CategoryBaseDto category) {
+                return TransactionBaseDto.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("100000"))
@@ -178,10 +178,10 @@ public class TestDataUtil {
                                 .build();
         }
 
-        public static TransactionDto createTestTransactionDtoC(
-                        final CustomerDto customer,
-                        final CategoryDto category) {
-                return TransactionDto.builder()
+        public static TransactionBaseDto createTestTransactionDtoC(
+                        final UserBaseDto customer,
+                        final CategoryBaseDto category) {
+                return TransactionBaseDto.builder()
                                 .customer(customer)
                                 .category(category)
                                 .amount(new BigDecimal("5000"))

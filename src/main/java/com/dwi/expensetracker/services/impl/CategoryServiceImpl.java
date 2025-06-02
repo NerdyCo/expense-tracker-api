@@ -1,6 +1,7 @@
 package com.dwi.expensetracker.services.impl;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,12 +21,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         categoryRepository.deleteById(id);
     }
 
     @Override
-    public boolean doesExist(Long id) {
+    public boolean doesExist(UUID id) {
         return categoryRepository.existsById(id);
     }
 
@@ -35,12 +36,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Optional<Category> findOne(Long id) {
+    public Optional<Category> findOne(UUID id) {
         return categoryRepository.findById(id);
     }
 
     @Override
-    public Category partialUpdate(Long id, Category categoryEntity) {
+    public Category partialUpdate(UUID id, Category categoryEntity) {
         if (categoryEntity.getCustomer() != null) {
             throw new IllegalArgumentException("Customer cannot be changed");
         }

@@ -11,24 +11,24 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.repositories.CategoryRepository;
-import com.dwi.expensetracker.repositories.CustomerRepository;
+import com.dwi.expensetracker.repositories.UserRepository;
 
 @DataJpaTest
 public class CategoryRepositoryIntegrationTest {
     private final CategoryRepository underTest;
-    private final CustomerRepository customerRepository;
+    private final UserRepository customerRepository;
 
     @Autowired
-    public CategoryRepositoryIntegrationTest(CategoryRepository underTest, CustomerRepository customerRepository) {
+    public CategoryRepositoryIntegrationTest(CategoryRepository underTest, UserRepository customerRepository) {
         this.underTest = underTest;
         this.customerRepository = customerRepository;
     }
 
     @Test
     public void testThatCategoryCanBeCreatedAndRecalled() {
-        Customer customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
+        User customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
         Category category = TestDataUtil.createTestCategoryEntityA(customer);
 
         underTest.save(category);
@@ -42,7 +42,7 @@ public class CategoryRepositoryIntegrationTest {
 
     @Test
     public void testThatMultipleCategoriesCanBeCreatedAndRecalled() {
-        Customer customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
+        User customer = customerRepository.save(TestDataUtil.createTestCustomerEntityA());
 
         Category categoryA = TestDataUtil.createTestCategoryEntityA(customer);
         Category categoryB = TestDataUtil.createTestCategoryEntityB(customer);

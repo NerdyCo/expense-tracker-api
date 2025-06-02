@@ -1,6 +1,6 @@
 package com.dwi.expensetracker.domains.dtos.category;
 
-import com.dwi.expensetracker.domains.dtos.customer.CreateCustomerDto;
+import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,10 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreateCategoryDto {
+public class CategoryBaseDto {
     private Long id;
 
-    private CreateCustomerDto customer;
+    private UserBaseDto customer;
 
     private String name;
 }

@@ -13,7 +13,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.Customer;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.services.CategoryService;
 
 @SpringBootTest
@@ -28,7 +28,7 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatCategoryCanBeCreatedAndRecalled() {
-        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        User customer = TestDataUtil.createTestCustomerEntityA();
         Category category = TestDataUtil.createTestCategoryEntityA(customer);
 
         Category savedCategory = underTest.save(category);
@@ -42,9 +42,9 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatMultipleCategoriesCaBeCreatedAndRecalled() {
-        Customer customerA = TestDataUtil.createTestCustomerEntityA();
-        Customer customerB = TestDataUtil.createTestCustomerEntityB();
-        Customer customerC = TestDataUtil.createTestCustomerEntityC();
+        User customerA = TestDataUtil.createTestCustomerEntityA();
+        User customerB = TestDataUtil.createTestCustomerEntityB();
+        User customerC = TestDataUtil.createTestCustomerEntityC();
 
         underTest.save(TestDataUtil.createTestCategoryEntityA(customerA));
         underTest.save(TestDataUtil.createTestCategoryEntityB(customerB));
@@ -60,7 +60,7 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatCategoryCanBePartiallyUpdated() {
-        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        User customer = TestDataUtil.createTestCustomerEntityA();
         Category savedCategory = underTest.save(TestDataUtil.createTestCategoryEntityA(customer));
 
         Category updateCategory = Category.builder()
@@ -74,7 +74,7 @@ public class CategoryServiceIntegrationTest {
 
     @Test
     public void testThatCategoryCanBeDeleted() {
-        Customer customer = TestDataUtil.createTestCustomerEntityA();
+        User customer = TestDataUtil.createTestCustomerEntityA();
         Category category = TestDataUtil.createTestCategoryEntityB(customer);
         Category savedCategory = underTest.save(category);
 

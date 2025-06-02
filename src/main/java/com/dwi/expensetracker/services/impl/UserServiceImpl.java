@@ -1,70 +1,71 @@
 package com.dwi.expensetracker.services.impl;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.dwi.expensetracker.domains.entities.Customer;
-import com.dwi.expensetracker.repositories.CustomerRepository;
-import com.dwi.expensetracker.services.CustomerService;
+import com.dwi.expensetracker.domains.entities.User;
+import com.dwi.expensetracker.repositories.UserRepository;
+import com.dwi.expensetracker.services.UserService;
 
 @Service
-public class CustomerServiceImpl implements CustomerService {
+public class UserServiceImpl implements UserService {
 
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public CustomerServiceImpl(CustomerRepository customerRepository, PasswordEncoder passwordEncoder) {
-        this.customerRepository = customerRepository;
+    public UserServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
-    public void delete(Long id) {
-        customerRepository.deleteById(id);
+    public void delete(UUID id) {
+        userRepository.deleteById(id);
     }
 
     @Override
-    public boolean doesExist(Long id) {
-        return customerRepository.existsById(id);
+    public boolean doesExist(UUID id) {
+        return userRepository.existsById(id);
     }
 
     @Override
-    public Page<Customer> findAll(Pageable pageable) {
-        return customerRepository.findAll(pageable);
+    public Page<User> findAll(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<Customer> findOne(Long id) {
-        return customerRepository.findById(id);
+    public Optional<User> findOne(UUID id) {
+        return userRepository.findById(id);
     }
 
     @Override
-    public Customer partialUpdate(Long id, Customer customerEntity) {
+    public User partialUpdate(UUID id, User customerEntity) {
         customerEntity.setId(id);
 
-        return customerRepository.findById(id).map(existingCustomer -> {
+        return userRepository.findById(id).map(existingCustomer -> {
             Optional.ofNullable(customerEntity.getUsername()).ifPresent(existingCustomer::setUsername);
             Optional.ofNullable(customerEntity.getEmail()).ifPresent(existingCustomer::setEmail);
             Optional.ofNullable(customerEntity.getPassword()).ifPresent(rawPassword -> {
                 String hashedPassword = passwordEncoder.encode(rawPassword);
                 existingCustomer.setPassword(hashedPassword);
             });
-            return customerRepository.save(existingCustomer);
+            return userRepository.save(existingCustomer);
         }).orElseThrow(() -> new RuntimeException("Customer does not exist"));
     }
 
     @Override
-    public Customer save(Customer customerEntity) {
+    public User save(User customerEntity) {
         if (customerEntity.getPassword() != null) {
             String hashedPassword = passwordEncoder.encode(customerEntity.getPassword());
             customerEntity.setPassword(hashedPassword);
         }
 
-        return customerRepository.save(customerEntity);
+        return userRepository.save(customerEntity);
     }
 
 }
