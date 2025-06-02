@@ -1,7 +1,7 @@
 package com.dwi.expensetracker.mappers;
 
 public interface Mapper<A, B> {
-    B mapTo(A a);
+    A toEntity(B dto);
 
-    A mapFrom(B b);
+    B toDto(A entity);
 }

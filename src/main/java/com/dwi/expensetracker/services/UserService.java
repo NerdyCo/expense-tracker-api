@@ -1,6 +1,5 @@
 package com.dwi.expensetracker.services;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,7 +12,7 @@ public interface UserService {
 
     Page<User> getAll(Pageable pageable);
 
-    Optional<User> getById(UUID id);
+    User getById(UUID id);
 
     User updatePartial(UUID id, User user);
 
