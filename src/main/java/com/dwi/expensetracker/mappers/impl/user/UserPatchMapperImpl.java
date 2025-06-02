@@ -7,13 +7,12 @@ import com.dwi.expensetracker.domains.dtos.user.UserPatchDto;
 import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.mappers.Mapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class UserPatchMapperImpl implements Mapper<User, UserPatchDto> {
     private final ModelMapper modelMapper;
-
-    public UserPatchMapperImpl(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public User toEntity(UserPatchDto dto) {

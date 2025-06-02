@@ -7,13 +7,12 @@ import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
 import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.mappers.Mapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class UserRequestMapperImpl implements Mapper<User, UserRequestDto> {
     private final ModelMapper modelMapper;
-
-    public UserRequestMapperImpl(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public User toEntity(UserRequestDto dto) {

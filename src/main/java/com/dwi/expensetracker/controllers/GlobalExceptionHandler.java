@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                                 .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
                                 .message("An unexpected error occurred")
-                                .path(request.getDescription(false).replace("uri=", ""))
+                                .path(extractPath(request))
                                 .build();
 
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.BAD_REQUEST.value())
                                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                                 .message(ex.getMessage())
-                                .path(request.getDescription(false).replace("uri=", ""))
+                                .path(extractPath(request))
                                 .build();
 
                 return ResponseEntity.badRequest().body(response);
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.CONFLICT.value())
                                 .error(HttpStatus.CONFLICT.getReasonPhrase())
                                 .message(ex.getMessage())
-                                .path(request.getDescription(false).replace("uri=", ""))
+                                .path(extractPath(request))
                                 .build();
 
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
@@ -71,14 +71,14 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.NOT_FOUND.value())
                                 .error(HttpStatus.NOT_FOUND.getReasonPhrase())
                                 .message(ex.getMessage())
-                                .path(request.getDescription(false).replace("uri=", ""))
+                                .path(extractPath(request))
                                 .build();
 
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         }
 
         @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<ErrorResponse> handleDuplicateResourceException(
+        public ResponseEntity<ErrorResponse> handleValidationException(
                         MethodArgumentNotValidException ex,
                         WebRequest request) {
                 List<ValidationError> fieldErrors = ex.getBindingResult()
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.BAD_REQUEST.value())
                                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
                                 .message("Validation failed")
-                                .path(request.getDescription(false).replace("uri=", ""))
+                                .path(extractPath(request))
                                 .errors(fieldErrors)
                                 .build();
 
@@ -109,9 +109,13 @@ public class GlobalExceptionHandler {
                                 .status(HttpStatus.CONFLICT.value())
                                 .error(HttpStatus.CONFLICT.getReasonPhrase())
                                 .message(ex.getMessage())
-                                .path(request.getDescription(false).replace("uri=", ""))
+                                .path(extractPath(request))
                                 .build();
 
                 return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+        }
+
+        private String extractPath(WebRequest request) {
+                return request.getDescription(false).replace("uri=", "");
         }
 }

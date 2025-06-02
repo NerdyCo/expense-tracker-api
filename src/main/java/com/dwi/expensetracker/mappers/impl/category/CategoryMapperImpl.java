@@ -7,13 +7,12 @@ import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.mappers.Mapper;
 
+import lombok.RequiredArgsConstructor;
+
 @Component
+@RequiredArgsConstructor
 public class CategoryMapperImpl implements Mapper<Category, CategoryBaseDto> {
     private final ModelMapper modelMapper;
-
-    public CategoryMapperImpl(ModelMapper modelMapper) {
-        this.modelMapper = modelMapper;
-    }
 
     @Override
     public Category mapFrom(CategoryBaseDto categoryDto) {

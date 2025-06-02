@@ -57,8 +57,23 @@ public class UserServiceImpl implements UserService {
     public User updatePartial(UUID id, User updateRequest) {
         return userRepository.findById(id)
                 .map(existing -> {
-                    Optional.ofNullable(updateRequest.getUsername()).ifPresent(existing::setUsername);
-                    Optional.ofNullable(updateRequest.getEmail()).ifPresent(existing::setEmail);
+                    if (updateRequest.getUsername() != null
+                            && !updateRequest.getUsername().equals(existing.getUsername())) {
+                        if (userRepository.existsByUsername(updateRequest.getUsername())) {
+                            throw new DuplicateResourceException("Username is already in use");
+                        }
+
+                        existing.setUsername(updateRequest.getUsername());
+                    }
+
+                    if (updateRequest.getEmail() != null && !updateRequest.getEmail().equals(existing.getEmail())) {
+                        if (userRepository.existsByEmail(updateRequest.getEmail())) {
+                            throw new DuplicateResourceException("Email is already in use");
+                        }
+
+                        existing.setEmail(updateRequest.getEmail());
+                    }
+
                     Optional.ofNullable(updateRequest.getPassword())
                             .filter(pwd -> !pwd.isBlank())
                             .map(passwordEncoder::encode)
