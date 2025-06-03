@@ -2,192 +2,168 @@ package com.dwi.expensetracker;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
 import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
-import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
 import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
+import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.domains.entities.Transaction;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
 public class TestDataUtil {
-        // customer
-        // entity
-        public static User createTestCustomerEntityA() {
+        // === constants ===
+        private static final String EMAIL_A = "kautsar@gmail.com";
+        private static final String EMAIL_B = "teguh@gmail.com";
+        private static final String EMAIL_C = "dwi@gmail.com";
+
+        private static final String USERNAME_A = "kautsar";
+        private static final String USERNAME_B = "teguh";
+        private static final String USERNAME_C = "dwi";
+
+        private static final String PASSWORD = "password123";
+
+        private static final BigDecimal AMOUNT_A = new BigDecimal("30000");
+        private static final BigDecimal AMOUNT_B = new BigDecimal("100000");
+        private static final BigDecimal AMOUNT_C = new BigDecimal("5000");
+
+        private static final LocalDate DATE_A = LocalDate.of(2025, 5, 1);
+        private static final LocalDate DATE_B = LocalDate.of(2025, 5, 3);
+        private static final LocalDate DATE_C = LocalDate.of(2025, 5, 5);
+
+        // === USER ===
+        public static User givenUserA() {
+                return createUser(EMAIL_A, USERNAME_A, PASSWORD);
+        }
+
+        public static User givenUserB() {
+                return createUser(EMAIL_B, USERNAME_B, PASSWORD);
+        }
+
+        public static User givenUserC() {
+                return createUser(EMAIL_C, USERNAME_C, PASSWORD);
+        }
+
+        public static UserRequestDto givenUserRequestDtoA() {
+                return createUserRequestDto(EMAIL_A, USERNAME_A, PASSWORD);
+        }
+
+        public static UserRequestDto givenUserRequestDtoB() {
+                return createUserRequestDto(EMAIL_B, USERNAME_B, PASSWORD);
+        }
+
+        public static UserRequestDto givenUserRequestDtoC() {
+                return createUserRequestDto(EMAIL_C, USERNAME_C, PASSWORD);
+        }
+
+        private static User createUser(String email, String username, String password) {
                 return User.builder()
-                                .email("kautsar@gmail.com")
-                                .username("kautsar")
-                                .password("kautsar123")
+                                .email(email)
+                                .username(username)
+                                .password(password)
                                 .build();
         }
 
-        public static User createTestCustomerEntityB() {
-                return User.builder()
-                                .email("teguh@gmail.com")
-                                .username("teguh")
-                                .password("teguh123")
-                                .build();
-        }
-
-        public static User createTestCustomerEntityC() {
-                return User.builder()
-                                .email("dwi@gmail.com")
-                                .username("dwi")
-                                .password("dwi123")
-                                .build();
-        }
-
-        // dto
-        public static UserRequestDto createTestCustomerDtoA() {
+        private static UserRequestDto createUserRequestDto(String email, String username, String password) {
                 return UserRequestDto.builder()
-                                .email("kautsar@gmail.com")
-                                .username("kautsar")
-                                .password("kautsar123")
+                                .email(email)
+                                .username(username)
+                                .password(password)
                                 .build();
         }
 
-        public static UserRequestDto createTestCustomerDtoB() {
-                return UserRequestDto.builder()
-                                .email("teguh@gmail.com")
-                                .username("teguh")
-                                .password("teguh123")
-                                .build();
+        // === CATEGORY ===
+        public static Category givenCategoryA(User user) {
+                return createCategory(user, "Food & Beverage");
         }
 
-        public static UserRequestDto createTestCustomerDtoC() {
-                return UserRequestDto.builder()
-                                .email("dwi@gmail.com")
-                                .username("dwi")
-                                .password("dwi123")
-                                .build();
+        public static Category givenCategoryB(User user) {
+                return createCategory(user, "Transportation");
         }
 
-        // category
-        // entity
-        public static Category createTestCategoryEntityA(final User customer) {
+        public static Category givenCategoryC(User user) {
+                return createCategory(user, "Hobby");
+        }
+
+        public static CategoryRequestDto givenCategoryDtoA(UUID userId) {
+                return createCategoryDto(userId, "Food & Beverage");
+        }
+
+        public static CategoryRequestDto givenCategoryDtoB(UUID userId) {
+                return createCategoryDto(userId, "Transportation");
+        }
+
+        public static CategoryRequestDto givenCategoryDtoC(UUID userId) {
+                return createCategoryDto(userId, "Hobby");
+        }
+
+        private static Category createCategory(User user, String name) {
                 return Category.builder()
-                                .customer(customer)
-                                .name("Food & Beverage")
+                                .user(user)
+                                .name(name)
                                 .build();
         }
 
-        public static Category createTestCategoryEntityB(final User customer) {
-                return Category.builder()
-                                .customer(customer)
-                                .name("Transportation")
-                                .build();
-        }
-
-        public static Category createTestCategoryEntityC(final User customer) {
-                return Category.builder()
-                                .customer(customer)
-                                .name("Hobby")
-                                .build();
-        }
-
-        // dto
-        public static CategoryRequestDto createTestCategoryDtoA(final UserRequestDto customer) {
+        private static CategoryRequestDto createCategoryDto(UUID userId, String name) {
                 return CategoryRequestDto.builder()
-                                .customer(customer)
-                                .name("Food & Beverage")
+                                .userId(userId)
+                                .name(name)
                                 .build();
         }
 
-        public static CategoryRequestDto createTestCategoryDtoB(final UserRequestDto customer) {
-                return CategoryRequestDto.builder()
-                                .customer(customer)
-                                .name("Transportation")
-                                .build();
+        // === TRANSACTION ===
+        public static Transaction givenTransactionA(User user, Category category) {
+                return createTransaction(user, category, AMOUNT_A, TransactionType.EXPENSE, "Lunch with friends",
+                                DATE_A);
         }
 
-        public static CategoryRequestDto createTestCategoryDtoC(final UserRequestDto customer) {
-                return CategoryRequestDto.builder()
-                                .customer(customer)
-                                .name("Hobby")
-                                .build();
+        public static Transaction givenTransactionB(User user, Category category) {
+                return createTransaction(user, category, AMOUNT_B, TransactionType.INCOME, "Freelance project", DATE_B);
         }
 
-        // transaction
-        // entity
-        public static Transaction createTestTransactionEntityA(
-                        final User customer,
-                        final Category category) {
+        public static Transaction givenTransactionC(User user, Category category) {
+                return createTransaction(user, category, AMOUNT_C, TransactionType.EXPENSE, "Coffee", DATE_C);
+        }
+
+        public static TransactionBaseDto givenTransactionDtoA(UserBaseDto user, CategoryBaseDto category) {
+                return createTransactionDto(user, category, AMOUNT_A, TransactionType.EXPENSE, "Lunch with friends",
+                                DATE_A);
+        }
+
+        public static TransactionBaseDto givenTransactionDtoB(UserBaseDto user, CategoryBaseDto category) {
+                return createTransactionDto(user, category, AMOUNT_B, TransactionType.INCOME, "Freelance project",
+                                DATE_B);
+        }
+
+        public static TransactionBaseDto givenTransactionDtoC(UserBaseDto user, CategoryBaseDto category) {
+                return createTransactionDto(user, category, AMOUNT_C, TransactionType.EXPENSE, "Coffee", DATE_C);
+        }
+
+        private static Transaction createTransaction(User user, Category category, BigDecimal amount,
+                        TransactionType type, String description, LocalDate date) {
                 return Transaction.builder()
-                                .customer(customer)
+                                .user(user)
                                 .category(category)
-                                .amount(new BigDecimal("30000"))
-                                .type(TransactionType.EXPENSE)
-                                .description("Lunch with friends")
-                                .date(LocalDate.of(2025, 5, 1))
+                                .amount(amount)
+                                .type(type)
+                                .description(description)
+                                .date(date)
                                 .build();
         }
 
-        public static Transaction createTestTransactionEntityB(
-                        final User customer,
-                        final Category category) {
-                return Transaction.builder()
-                                .customer(customer)
-                                .category(category)
-                                .amount(new BigDecimal("100000"))
-                                .type(TransactionType.INCOME)
-                                .description("Freelance project")
-                                .date(LocalDate.of(2025, 5, 3))
-                                .build();
-        }
-
-        public static Transaction createTestTransactionEntityC(
-                        final User customer,
-                        final Category category) {
-                return Transaction.builder()
-                                .customer(customer)
-                                .category(category)
-                                .amount(new BigDecimal("5000"))
-                                .type(TransactionType.EXPENSE)
-                                .description("Coffee")
-                                .date(LocalDate.of(2025, 5, 5))
-                                .build();
-        }
-
-        // dto
-        public static TransactionBaseDto createTestTransactionDtoA(
-                        final UserBaseDto customer,
-                        final CategoryBaseDto category) {
+        private static TransactionBaseDto createTransactionDto(UserBaseDto user, CategoryBaseDto category,
+                        BigDecimal amount, TransactionType type,
+                        String description, LocalDate date) {
                 return TransactionBaseDto.builder()
-                                .customer(customer)
+                                .user(user)
                                 .category(category)
-                                .amount(new BigDecimal("30000"))
-                                .type(TransactionType.EXPENSE)
-                                .description("Lunch with friends")
-                                .date(LocalDate.of(2025, 5, 1))
-                                .build();
-        }
-
-        public static TransactionBaseDto createTestTransactionDtoB(
-                        final UserBaseDto customer,
-                        final CategoryBaseDto category) {
-                return TransactionBaseDto.builder()
-                                .customer(customer)
-                                .category(category)
-                                .amount(new BigDecimal("100000"))
-                                .type(TransactionType.INCOME)
-                                .description("Freelance project")
-                                .date(LocalDate.of(2025, 5, 3))
-                                .build();
-        }
-
-        public static TransactionBaseDto createTestTransactionDtoC(
-                        final UserBaseDto customer,
-                        final CategoryBaseDto category) {
-                return TransactionBaseDto.builder()
-                                .customer(customer)
-                                .category(category)
-                                .amount(new BigDecimal("5000"))
-                                .type(TransactionType.EXPENSE)
-                                .description("Coffee")
-                                .date(LocalDate.of(2025, 5, 5))
+                                .amount(amount)
+                                .type(type)
+                                .description(description)
+                                .date(date)
                                 .build();
         }
 }
