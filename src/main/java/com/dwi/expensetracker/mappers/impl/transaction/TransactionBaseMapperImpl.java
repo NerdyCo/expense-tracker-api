@@ -11,17 +11,17 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class TransactionMapperImpl implements Mapper<Transaction, TransactionBaseDto> {
+public class TransactionBaseMapperImpl implements Mapper<Transaction, TransactionBaseDto> {
     private final ModelMapper modelMapper;
 
     @Override
-    public Transaction mapFrom(TransactionBaseDto transactionDto) {
-        return modelMapper.map(transactionDto, Transaction.class);
+    public Transaction toEntity(TransactionBaseDto dto) {
+        return modelMapper.map(dto, Transaction.class);
     }
 
     @Override
-    public TransactionBaseDto mapTo(Transaction transactionEntity) {
-        return modelMapper.map(transactionEntity, TransactionBaseDto.class);
+    public TransactionBaseDto toDto(Transaction entity) {
+        return modelMapper.map(entity, TransactionBaseDto.class);
     }
 
 }
