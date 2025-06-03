@@ -11,17 +11,17 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class CategoryMapperImpl implements Mapper<Category, CategoryBaseDto> {
+public class CategoryBaseMapperImpl implements Mapper<Category, CategoryBaseDto> {
     private final ModelMapper modelMapper;
 
     @Override
-    public Category mapFrom(CategoryBaseDto categoryDto) {
-        return modelMapper.map(categoryDto, Category.class);
+    public Category toEntity(CategoryBaseDto dto) {
+        return modelMapper.map(dto, Category.class);
     }
 
     @Override
-    public CategoryBaseDto mapTo(Category categoryEntity) {
-        return modelMapper.map(categoryEntity, CategoryBaseDto.class);
+    public CategoryBaseDto toDto(Category entity) {
+        return modelMapper.map(entity, CategoryBaseDto.class);
     }
 
 }

@@ -1,9 +1,6 @@
 package com.dwi.expensetracker.domains.dtos.category;
 
-import java.util.UUID;
-
-import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
-
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,10 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CategoryBaseDto {
-    private UUID id;
-
-    private UserBaseDto user;
-
+public class CategoryPatchDto {
+    @Size(min = 3, max = 50, message = "Category name must be between {min} and {max} characters")
     private String name;
 }

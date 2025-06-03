@@ -1,6 +1,5 @@
 package com.dwi.expensetracker.services.impl;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -8,55 +7,74 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.dwi.expensetracker.domains.entities.Category;
+import com.dwi.expensetracker.exceptions.DuplicateResourceException;
 import com.dwi.expensetracker.repositories.CategoryRepository;
 import com.dwi.expensetracker.services.CategoryService;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    @Override
+    @Transactional
+    public Category create(Category category) {
+        UUID userId = category.getUser().getId();
+
+        if (categoryRepository.existsByUserIdAndName(userId, category.getName())) {
+            throw new DuplicateResourceException("Category name already exists for this user");
+        }
+
+        return categoryRepository.save(category);
     }
 
     @Override
-    public void delete(UUID id) {
-        categoryRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean doesExist(UUID id) {
-        return categoryRepository.existsById(id);
-    }
-
-    @Override
-    public Page<Category> findAll(Pageable pageable) {
+    public Page<Category> getAll(Pageable pageable) {
         return categoryRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<Category> findOne(UUID id) {
-        return categoryRepository.findById(id);
+    public Category getById(UUID id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + id));
     }
 
     @Override
-    public Category partialUpdate(UUID id, Category categoryEntity) {
-        if (categoryEntity.getCustomer() != null) {
-            throw new IllegalArgumentException("Customer cannot be changed");
+    @Transactional
+    public Category updatePartial(UUID id, Category category) {
+        return categoryRepository.findById(id)
+                .map(existing -> {
+                    // prevent changing the user (foreign key)
+                    if (category.getUser() != null && !category.getUser().getId().equals(existing.getUser().getId())) {
+                        throw new IllegalArgumentException("User cannot be changed for a category");
+                    }
+
+                    // handle uniqueness name check
+                    if (category.getName() != null && !category.getName().equals(existing.getName())) {
+                        if (categoryRepository.existsByUserIdAndName(existing.getUser().getId(), category.getName())) {
+                            throw new DuplicateResourceException("Catergory name already exists for this user");
+                        }
+
+                        existing.setName(category.getName());
+                    }
+
+                    return categoryRepository.save(existing);
+                }).orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + id));
+    }
+
+    @Override
+    @Transactional
+    public void deleteById(UUID id) {
+        if (!categoryRepository.existsById(id)) {
+            throw new EntityNotFoundException("Category not found with ID " + id);
         }
 
-        categoryEntity.setId(id);
-
-        return categoryRepository.findById(id).map(existingCategory -> {
-            Optional.ofNullable(categoryEntity.getName()).ifPresent(existingCategory::setName);
-            return categoryRepository.save(existingCategory);
-        }).orElseThrow(() -> new RuntimeException("Category does not exist"));
-    }
-
-    @Override
-    public Category save(Category categoryEntity) {
-        return categoryRepository.save(categoryEntity);
+        categoryRepository.deleteById(id);
     }
 
 }

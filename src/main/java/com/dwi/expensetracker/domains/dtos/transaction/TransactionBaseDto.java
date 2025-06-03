@@ -2,6 +2,7 @@ package com.dwi.expensetracker.domains.dtos.transaction;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
 import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TransactionBaseDto {
 
-    private Long id;
+    private UUID id;
 
     private UserBaseDto customer;
 
