@@ -55,7 +55,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should create a new user with encoded password")
-    void shouldCreateUserSuccessfully() {
+    public void shouldCreateUserSuccessfully() {
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(false);
         when(userRepository.existsByUsername(user.getUsername())).thenReturn(false);
         when(passwordEncoder.encode(user.getPassword())).thenReturn("encodedPassword");
@@ -69,7 +69,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should throw when creating user with existing email")
-    void shouldThrowWhenEmailExists() {
+    public void shouldThrowWhenEmailExists() {
         when(userRepository.existsByEmail(user.getEmail())).thenReturn(true);
 
         assertThatThrownBy(() -> userService.create(user))
@@ -81,7 +81,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should get all users paged")
-    void shouldReturnPagedUsers() {
+    public void shouldReturnPagedUsers() {
         PageRequest pageable = PageRequest.of(0, 10);
         PageImpl<User> page = new PageImpl<>(List.of(user));
 
@@ -95,7 +95,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should get user by ID")
-    void shouldReturnUserById() {
+    public void shouldReturnUserById() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.of(user));
 
         User found = userService.getById(USER_ID);
@@ -105,7 +105,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should throw when user not found by ID")
-    void shouldThrowWhenUserNotFound() {
+    public void shouldThrowWhenUserNotFound() {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> userService.getById(USER_ID))
@@ -115,7 +115,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should update user partially")
-    void shouldUpdateUserPartially() {
+    public void shouldUpdateUserPartially() {
         User existing = TestDataUtil.givenUserA();
         existing.setId(USER_ID);
 
@@ -137,7 +137,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should delete user by ID")
-    void shouldDeleteUserById() {
+    public void shouldDeleteUserById() {
         when(userRepository.existsById(USER_ID)).thenReturn(true);
 
         userService.deleteById(USER_ID);
@@ -147,7 +147,7 @@ public class UserServiceUnitTest {
 
     @Test
     @DisplayName("Should throw when deleting non-existent user")
-    void shouldThrowWhenDeletingNonExistentUser() {
+    public void shouldThrowWhenDeletingNonExistentUser() {
         when(userRepository.existsById(USER_ID)).thenReturn(false);
 
         assertThatThrownBy(() -> userService.deleteById(USER_ID))
