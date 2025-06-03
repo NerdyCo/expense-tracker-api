@@ -20,6 +20,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TransactionRequestDto {
 
+    @NotNull(message = "User ID is required")
+    private UUID userId;
+
     @NotNull(message = "Category ID is required")
     private UUID categoryId;
 
