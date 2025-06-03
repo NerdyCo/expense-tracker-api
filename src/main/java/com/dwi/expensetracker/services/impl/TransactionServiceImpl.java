@@ -1,6 +1,7 @@
 package com.dwi.expensetracker.services.impl;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,51 +11,58 @@ import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.repositories.TransactionRepository;
 import com.dwi.expensetracker.services.TransactionService;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public TransactionServiceImpl(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
+    @Override
+    public Transaction create(Transaction transaction) {
+        return transactionRepository.save(transaction);
     }
 
     @Override
-    public void delete(Long id) {
-        transactionRepository.deleteById(id);
-    }
-
-    @Override
-    public boolean doesExist(Long id) {
-        return transactionRepository.existsById(id);
-    }
-
-    @Override
-    public Page<Transaction> findAll(Pageable pageable) {
+    public Page<Transaction> getAll(Pageable pageable) {
         return transactionRepository.findAll(pageable);
     }
 
     @Override
-    public Optional<Transaction> findOne(Long id) {
-        return transactionRepository.findById(id);
+    public Transaction getById(UUID id) {
+        return transactionRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Transaction not found with ID " + id));
     }
 
     @Override
-    public Transaction partialUpdate(Long id, Transaction transactionEntity) {
-        transactionEntity.setId(id);
+    @Transactional
+    public Transaction updatePartial(UUID id, Transaction transaction) {
+        return transactionRepository.findById(id).map(existing -> {
+            Optional.ofNullable(transaction.getAmount()).ifPresent(existing::setAmount);
+            Optional.ofNullable(transaction.getType()).ifPresent(existing::setType);
+            Optional.ofNullable(transaction.getDescription()).ifPresent(existing::setDescription);
+            Optional.ofNullable(transaction.getDate()).ifPresent(existing::setDate);
+            Optional.ofNullable(transaction.getCategory()).ifPresent(existing::setCategory);
 
-        return transactionRepository.findById(id).map(existingTransaction -> {
-            Optional.ofNullable(transactionEntity.getAmount()).ifPresent(existingTransaction::setAmount);
-            Optional.ofNullable(transactionEntity.getType()).ifPresent(existingTransaction::setType);
-            Optional.ofNullable(transactionEntity.getDescription()).ifPresent(existingTransaction::setDescription);
-            Optional.ofNullable(transactionEntity.getDate()).ifPresent(existingTransaction::setDate);
-            return transactionRepository.save(existingTransaction);
-        }).orElseThrow(() -> new RuntimeException("Transaction does not exist"));
+            if (transaction.getUser() != null && !transaction.getUser().getId().equals(existing.getUser().getId())) {
+                throw new IllegalArgumentException("User cannot be changed for a transaction");
+            }
+
+            return transactionRepository.save(existing);
+        }).orElseThrow(() -> new EntityNotFoundException("Transaction not found with ID " + id));
     }
 
     @Override
-    public Transaction save(Transaction transactionEntity) {
-        return transactionRepository.save(transactionEntity);
+    @Transactional
+    public void deleteById(UUID id) {
+        if (!transactionRepository.existsById(id)) {
+            throw new EntityNotFoundException("Transaction not found with ID " + id);
+        }
+
+        transactionRepository.deleteById(id);
     }
 
 }

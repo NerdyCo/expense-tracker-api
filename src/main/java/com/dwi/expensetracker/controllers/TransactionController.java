@@ -1,5 +1,7 @@
 package com.dwi.expensetracker.controllers;
 
+import java.util.UUID;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -9,81 +11,66 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionPatchDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionRequestDto;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.TransactionService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/transactions")
+@RequestMapping("/api/v1/transactions")
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-    private final Mapper<Transaction, TransactionBaseDto> transactionMapper;
+    private final Mapper<Transaction, TransactionBaseDto> transactionBaseMapper;
+    private final Mapper<Transaction, TransactionRequestDto> transactionRequestMapper;
+    private final Mapper<Transaction, TransactionPatchDto> transactionPatchMapper;
 
     @PostMapping
-    public ResponseEntity<TransactionBaseDto> createTransaction(@RequestBody TransactionBaseDto transactionDto) {
-        Transaction transactionEntity = transactionMapper.mapFrom(transactionDto);
-        Transaction savedTransactionEntity = transactionService.save(transactionEntity);
-        TransactionBaseDto savedDto = transactionMapper.mapTo(savedTransactionEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedDto);
-    }
+    public ResponseEntity<TransactionBaseDto> createTransaction(@Valid @RequestBody TransactionRequestDto requestDto) {
+        Transaction transactionToCreate = transactionRequestMapper.toEntity(requestDto);
+        Transaction createdTransaction = transactionService.create(transactionToCreate);
+        TransactionBaseDto responseDto = transactionBaseMapper.toDto(createdTransaction);
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TransactionBaseDto> getTransaction(@PathVariable Long id) {
-        return transactionService.findOne(id)
-                .map(transactionMapper::mapTo)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public Page<TransactionBaseDto> getAllTransactions(Pageable pageable) {
-        return transactionService.findAll(pageable)
-                .map(transactionMapper::mapTo);
+    public ResponseEntity<Page<TransactionBaseDto>> getAllTransactions(Pageable pageable) {
+        Page<TransactionBaseDto> transactions = transactionService.getAll(pageable).map(transactionBaseMapper::toDto);
+
+        return ResponseEntity.ok(transactions);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TransactionBaseDto> fullUpdateTransaction(
-            @PathVariable Long id,
-            @RequestBody TransactionBaseDto transactionDto) {
-        if (!transactionService.doesExist(id)) {
-            return ResponseEntity.notFound().build();
-        }
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionBaseDto> getTransactionById(@PathVariable UUID id) {
+        Transaction transaction = transactionService.getById(id);
 
-        transactionDto.setId(id);
-        Transaction updatedTransactionEntity = transactionService.save(transactionMapper.mapFrom(transactionDto));
-        return ResponseEntity.ok(transactionMapper.mapTo(updatedTransactionEntity));
+        return ResponseEntity.ok(transactionBaseMapper.toDto(transaction));
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<TransactionBaseDto> partialUpdateTrasaction(
-            @PathVariable Long id,
-            @RequestBody TransactionBaseDto transactionDto) {
-        if (!transactionService.doesExist(id)) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TransactionBaseDto> updateTransactionPartially(
+            @PathVariable UUID id,
+            @Valid @RequestBody TransactionPatchDto patchDto) {
+        Transaction patchRequest = transactionPatchMapper.toEntity(patchDto);
+        Transaction updateTransaction = transactionService.updatePartial(id, patchRequest);
 
-        Transaction updatedTransactionEntity = transactionService.partialUpdate(
-                id,
-                transactionMapper.mapFrom(transactionDto));
-        return ResponseEntity.ok(transactionMapper.mapTo(updatedTransactionEntity));
+        return ResponseEntity.ok(transactionBaseMapper.toDto(updateTransaction));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
-        if (!transactionService.doesExist(id)) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deleteTransaction(@PathVariable UUID id) {
+        transactionService.deleteById(id);
 
-        transactionService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
