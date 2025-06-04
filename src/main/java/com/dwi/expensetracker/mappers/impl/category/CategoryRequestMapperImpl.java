@@ -5,7 +5,9 @@ import org.springframework.stereotype.Component;
 
 import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
 import com.dwi.expensetracker.domains.entities.Category;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.mappers.Mapper;
+import com.dwi.expensetracker.services.UserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,10 +15,19 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryRequestMapperImpl implements Mapper<Category, CategoryRequestDto> {
     private final ModelMapper modelMapper;
+    private final UserService userService;
 
     @Override
     public Category toEntity(CategoryRequestDto dto) {
-        return modelMapper.map(dto, Category.class);
+        Category category = modelMapper.map(dto, Category.class);
+
+        category.setId(null);
+
+        // convert userId into User entity
+        User user = userService.getById(dto.getUserId());
+        category.setUser(user);
+
+        return category;
     }
 
     @Override
