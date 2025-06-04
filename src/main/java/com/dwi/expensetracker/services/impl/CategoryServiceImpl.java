@@ -40,7 +40,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category getById(UUID id) {
-        return categoryRepository.findById(id)
+        return categoryRepository.findByIdWithUser(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + id));
     }
 

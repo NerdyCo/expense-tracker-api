@@ -2,9 +2,10 @@ package com.dwi.expensetracker.integration.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.Optional;
-
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
@@ -15,42 +16,49 @@ import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.services.CategoryService;
+import com.dwi.expensetracker.services.UserService;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestMethodOrder(MethodOrderer.DisplayName.class)
 public class CategoryServiceIntegrationTest {
     private final CategoryService underTest;
+    private final UserService userService;
 
     @Autowired
-    public CategoryServiceIntegrationTest(CategoryService underTest) {
+    public CategoryServiceIntegrationTest(
+            CategoryService underTest,
+            UserService userService) {
         this.underTest = underTest;
+        this.userService = userService;
     }
 
     @Test
-    public void testThatCategoryCanBeCreatedAndRecalled() {
-        User customer = TestDataUtil.createTestCustomerEntityA();
-        Category category = TestDataUtil.createTestCategoryEntityA(customer);
+    @DisplayName("1. Should create a category and retrieve it successfully")
+    public void shouldCreateAndRetrieveCategory() {
+        User user = userService.create(TestDataUtil.givenUserA());
+        Category category = TestDataUtil.givenCategoryA(user);
 
-        Category savedCategory = underTest.save(category);
+        Category savedCategory = underTest.create(category);
+        Category foundCategory = underTest.getById(savedCategory.getId());
 
-        Optional<Category> foundCategory = underTest.findOne(savedCategory.getId());
-
-        assertThat(foundCategory).isPresent();
-        assertThat(foundCategory.get().getName()).isEqualTo("Food & Beverage");
-        assertThat(foundCategory.get().getCustomer().getUsername()).isEqualTo("kautsar");
+        assertThat(foundCategory).isNotNull();
+        assertThat(foundCategory.getName()).isEqualTo("Food & Beverage");
+        assertThat(foundCategory.getUser().getUsername()).isEqualTo("kautsar");
     }
 
     @Test
-    public void testThatMultipleCategoriesCaBeCreatedAndRecalled() {
-        User customerA = TestDataUtil.createTestCustomerEntityA();
-        User customerB = TestDataUtil.createTestCustomerEntityB();
-        User customerC = TestDataUtil.createTestCustomerEntityC();
+    @DisplayName("2. Should create multiple categories and retrieve all")
+    public void shouldCreateMultipleCategoriesAndRetrieveAll() {
+        User userA = userService.create(TestDataUtil.givenUserA());
+        User userB = userService.create(TestDataUtil.givenUserB());
+        User userC = userService.create(TestDataUtil.givenUserC());
 
-        underTest.save(TestDataUtil.createTestCategoryEntityA(customerA));
-        underTest.save(TestDataUtil.createTestCategoryEntityB(customerB));
-        underTest.save(TestDataUtil.createTestCategoryEntityC(customerC));
+        underTest.create(TestDataUtil.givenCategoryA(userA));
+        underTest.create(TestDataUtil.givenCategoryB(userB));
+        underTest.create(TestDataUtil.givenCategoryC(userC));
 
-        Page<Category> result = underTest.findAll(PageRequest.of(0, 10));
+        Page<Category> result = underTest.getAll(PageRequest.of(0, 10));
 
         assertThat(result.getContent())
                 .hasSize(3)
@@ -59,29 +67,34 @@ public class CategoryServiceIntegrationTest {
     }
 
     @Test
-    public void testThatCategoryCanBePartiallyUpdated() {
-        User customer = TestDataUtil.createTestCustomerEntityA();
-        Category savedCategory = underTest.save(TestDataUtil.createTestCategoryEntityA(customer));
+    @DisplayName("3. Should partially update a category")
+    public void shouldPartiallyUpdateCategory() {
+        User user = userService.create(TestDataUtil.givenUserA());
+        Category savedCategory = underTest.create(TestDataUtil.givenCategoryA(user));
 
-        Category updateCategory = Category.builder()
-                .name("updated name")
+        Category updateRequest = Category.builder()
+                .name("Updated Name")
                 .build();
 
-        Category updatedCategory = underTest.partialUpdate(savedCategory.getId(), updateCategory);
+        Category updatedCategory = underTest.updatePartial(savedCategory.getId(), updateRequest);
 
-        assertThat(updatedCategory.getName()).isEqualTo("updated name");
+        assertThat(updatedCategory.getName()).isEqualTo("Updated Name");
+        assertThat(updatedCategory.getUser().getId()).isEqualTo(user.getId());
     }
 
     @Test
-    public void testThatCategoryCanBeDeleted() {
-        User customer = TestDataUtil.createTestCustomerEntityA();
-        Category category = TestDataUtil.createTestCategoryEntityB(customer);
-        Category savedCategory = underTest.save(category);
+    @DisplayName("4. Should delete category successfully")
+    public void shouldDeleteCategory() {
+        User user = userService.create(TestDataUtil.givenUserA());
+        Category category = TestDataUtil.givenCategoryA(user);
+        Category savedCategory = underTest.create(category);
 
-        underTest.delete(savedCategory.getId());
+        underTest.deleteById(savedCategory.getId());
 
-        boolean result = underTest.doesExist(savedCategory.getId());
+        boolean stillExists = underTest.getAll(PageRequest.of(0, 10))
+                .stream()
+                .anyMatch(cat -> cat.getId().equals(savedCategory.getId()));
 
-        assertThat(result).isFalse();
+        assertThat(stillExists).isFalse();
     }
 }
