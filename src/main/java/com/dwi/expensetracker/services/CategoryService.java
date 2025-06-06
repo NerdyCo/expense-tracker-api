@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ public interface CategoryService {
     Page<Category> getAll(Pageable pageable);
 
     Category getById(UUID id);
+
+    List<Category> getByUserId(UUID userId);
 
     Category updatePartial(UUID id, Category category);
 

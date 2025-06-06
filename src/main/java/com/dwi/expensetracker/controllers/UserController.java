@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -16,10 +17,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
+import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
 import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
 import com.dwi.expensetracker.domains.dtos.user.UserPatchDto;
+import com.dwi.expensetracker.domains.entities.Category;
+import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.mappers.Mapper;
+import com.dwi.expensetracker.services.CategoryService;
+import com.dwi.expensetracker.services.TransactionService;
 import com.dwi.expensetracker.services.UserService;
 
 import jakarta.validation.Valid;
@@ -30,9 +37,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final CategoryService categoryService;
+    private final TransactionService transactionService;
     private final Mapper<User, UserBaseDto> userBaseMapper;
     private final Mapper<User, UserRequestDto> userRequestMapper;
     private final Mapper<User, UserPatchDto> userPatchMapper;
+    private final Mapper<Category, CategoryBaseDto> categoryBaseMapper;
+    private final Mapper<Transaction, TransactionBaseDto> transactionBaseMapper;
 
     @PostMapping
     public ResponseEntity<UserBaseDto> createUser(@Valid @RequestBody UserRequestDto requestDto) {
@@ -53,6 +64,26 @@ public class UserController {
     public ResponseEntity<UserBaseDto> getUserById(@PathVariable UUID id) {
         User user = userService.getById(id);
         return ResponseEntity.ok(userBaseMapper.toDto(user));
+    }
+
+    @GetMapping("/{id}/categories")
+    public ResponseEntity<List<CategoryBaseDto>> getUserCategories(@PathVariable UUID id) {
+        List<Category> categories = categoryService.getByUserId(id);
+
+        return ResponseEntity.ok(
+                categories.stream()
+                        .map(categoryBaseMapper::toDto)
+                        .toList());
+    }
+
+    @GetMapping("/{id}/transactions")
+    public ResponseEntity<List<TransactionBaseDto>> getUserTransactions(@PathVariable UUID id) {
+        List<Transaction> transactions = transactionService.getByUserId(id);
+
+        return ResponseEntity.ok(
+                transactions.stream()
+                        .map(transactionBaseMapper::toDto)
+                        .toList());
     }
 
     @PatchMapping("/{id}")

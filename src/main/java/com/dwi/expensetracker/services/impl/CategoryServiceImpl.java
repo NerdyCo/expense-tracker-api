@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.services.impl;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.exceptions.DuplicateResourceException;
 import com.dwi.expensetracker.repositories.CategoryRepository;
+import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.services.CategoryService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class CategoryServiceImpl implements CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -75,6 +78,15 @@ public class CategoryServiceImpl implements CategoryService {
         }
 
         categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Category> getByUserId(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found with ID " + userId);
+        }
+
+        return categoryRepository.findByUserId(userId);
     }
 
 }

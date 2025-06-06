@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.services.impl;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.repositories.TransactionRepository;
+import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.services.TransactionService;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final UserRepository userRepository;
 
     @Override
     public Transaction create(Transaction transaction) {
@@ -63,6 +66,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         transactionRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Transaction> getByUserId(UUID userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found with ID " + userId);
+        }
+
+        return transactionRepository.findByUserId(userId);
     }
 
 }

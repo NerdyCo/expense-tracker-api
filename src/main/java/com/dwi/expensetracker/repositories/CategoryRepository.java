@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.repositories;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -16,4 +17,6 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     @Query("SELECT c FROM Category c JOIN FETCH c.user WHERE c.id = :id")
     Optional<Category> findByIdWithUser(@Param("id") UUID id);
+
+    List<Category> findByUserId(UUID userId);
 }

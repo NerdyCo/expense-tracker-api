@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.services;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +14,8 @@ public interface TransactionService {
     Page<Transaction> getAll(Pageable pageable);
 
     Transaction getById(UUID id);
+
+    List<Transaction> getByUserId(UUID userId);
 
     Transaction updatePartial(UUID id, Transaction transaction);
 
