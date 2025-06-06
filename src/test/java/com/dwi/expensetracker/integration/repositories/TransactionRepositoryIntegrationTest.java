@@ -77,4 +77,18 @@ public class TransactionRepositoryIntegrationTest {
 
         assertThat(result).isNotPresent();
     }
+
+    @Test
+    @DisplayName("4. Should find transactions by user ID")
+    public void shouldFindTransactionsByUserId() {
+        User user = userRepository.save(TestDataUtil.givenUserA());
+        Category category = categoryRepository.save(TestDataUtil.givenCategoryA(user));
+        Transaction transactionA = TestDataUtil.givenTransactionA(user, category);
+        Transaction transactionB = TestDataUtil.givenTransactionB(user, category);
+
+        underTest.saveAll(List.of(transactionA, transactionB));
+        List<Transaction> result = underTest.findByUserId(user.getId());
+
+        assertThat(result).hasSize(2);
+    }
 }

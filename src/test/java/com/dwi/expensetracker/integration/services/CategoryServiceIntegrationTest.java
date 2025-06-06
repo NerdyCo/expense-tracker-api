@@ -2,6 +2,8 @@ package com.dwi.expensetracker.integration.services;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -96,5 +98,17 @@ public class CategoryServiceIntegrationTest {
                 .anyMatch(cat -> cat.getId().equals(savedCategory.getId()));
 
         assertThat(stillExists).isFalse();
+    }
+
+    @Test
+    @DisplayName("5. Should return categories by user ID")
+    public void shouldReturnCategoriesByUserId() {
+        User user = userService.create(TestDataUtil.givenUserA());
+        Category categoryA = underTest.create(TestDataUtil.givenCategoryA(user));
+        Category categoryB = underTest.create(TestDataUtil.givenCategoryB(user));
+
+        List<Category> result = underTest.getByUserId(user.getId());
+
+        assertThat(result).containsExactlyInAnyOrder(categoryA, categoryB);
     }
 }

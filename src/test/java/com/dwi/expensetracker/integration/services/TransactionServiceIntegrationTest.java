@@ -3,6 +3,7 @@ package com.dwi.expensetracker.integration.services;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -119,5 +120,18 @@ public class TransactionServiceIntegrationTest {
                                 .anyMatch(transaction -> transaction.getId().equals(savedTransaction.getId()));
 
                 assertThat(exists).isFalse();
+        }
+
+        @Test
+        @DisplayName("5. Should return transactions by user ID")
+        public void shouldReturnTransactionsByUserId() {
+                User user = userService.create(TestDataUtil.givenUserA());
+                Category category = categoryService.create(TestDataUtil.givenCategoryA(user));
+                Transaction transactionA = underTest.create(TestDataUtil.givenTransactionA(user, category));
+                Transaction transactionB = underTest.create(TestDataUtil.givenTransactionB(user, category));
+
+                List<Transaction> result = underTest.getByUserId(user.getId());
+
+                assertThat(result).containsExactlyInAnyOrder(transactionA, transactionB);
         }
 }

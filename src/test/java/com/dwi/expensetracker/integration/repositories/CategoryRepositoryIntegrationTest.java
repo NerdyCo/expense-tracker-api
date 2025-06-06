@@ -96,4 +96,17 @@ public class CategoryRepositoryIntegrationTest {
         assertThat(result.get().getUser()).isEqualTo(user);
         assertThat(result.get().getName()).isEqualTo("Food & Beverage");
     }
+
+    @Test
+    @DisplayName("6. Should find categories by user ID")
+    public void shouldFindCategoriesByUserId() {
+        User user = userRepository.save(TestDataUtil.givenUserA());
+        Category categoryA = TestDataUtil.givenCategoryA(user);
+        Category categoryB = TestDataUtil.givenCategoryB(user);
+
+        underTest.saveAll(List.of(categoryA, categoryB));
+        List<Category> result = underTest.findByUserId(user.getId());
+
+        assertThat(result).hasSize(2);
+    }
 }

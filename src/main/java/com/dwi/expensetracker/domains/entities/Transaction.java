@@ -82,9 +82,6 @@ public class Transaction {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((amount == null) ? 0 : amount.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
         return result;
     }
 
@@ -101,21 +98,6 @@ public class Transaction {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
-            return false;
-        if (amount == null) {
-            if (other.amount != null)
-                return false;
-        } else if (!amount.equals(other.amount))
-            return false;
-        if (description == null) {
-            if (other.description != null)
-                return false;
-        } else if (!description.equals(other.description))
-            return false;
-        if (date == null) {
-            if (other.date != null)
-                return false;
-        } else if (!date.equals(other.date))
             return false;
         return true;
     }

@@ -15,7 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.dtos.user.UserPatchDto;
 import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
+import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.domains.entities.User;
+import com.dwi.expensetracker.services.CategoryService;
+import com.dwi.expensetracker.services.TransactionService;
 import com.dwi.expensetracker.services.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,15 +38,21 @@ import java.util.UUID;
 public class UserControllerIntegrationTest {
     private final MockMvc mockMvc;
     private final UserService userService;
+    private final CategoryService categoryService;
+    private final TransactionService transactionService;
     private final ObjectMapper objectMapper;
 
     @Autowired
     public UserControllerIntegrationTest(
             MockMvc mockMvc,
             UserService userService,
+            CategoryService categoryService,
+            TransactionService transactionService,
             ObjectMapper objectMapper) {
         this.mockMvc = mockMvc;
         this.userService = userService;
+        this.categoryService = categoryService;
+        this.transactionService = transactionService;
         this.objectMapper = objectMapper;
     }
 
@@ -127,4 +136,32 @@ public class UserControllerIntegrationTest {
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(3));
     }
+
+    @Test
+    @DisplayName("8. Should return 200 OK and user's categories")
+    public void shouldReturnUserCategories() throws Exception {
+        User user = userService.create(TestDataUtil.givenUserA());
+
+        categoryService.create(TestDataUtil.givenCategoryA(user));
+        categoryService.create(TestDataUtil.givenCategoryB(user));
+
+        mockMvc.perform(get(BASE_URL + "/" + user.getId() + "/categories"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
+    @Test
+    @DisplayName("9. Should return 200 OK and user's transactions")
+    public void shouldReturnUserTransactions() throws Exception {
+        User user = userService.create(TestDataUtil.givenUserA());
+        Category category = categoryService.create(TestDataUtil.givenCategoryA(user));
+
+        transactionService.create(TestDataUtil.givenTransactionA(user, category));
+        transactionService.create(TestDataUtil.givenTransactionB(user, category));
+
+        mockMvc.perform(get(BASE_URL + "/" + user.getId() + "/transactions"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
+
 }
