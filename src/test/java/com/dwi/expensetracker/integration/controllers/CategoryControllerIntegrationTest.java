@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.util.UUID;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
+
+import com.dwi.expensetracker.TestAuthUtil;
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.dtos.category.CategoryPatchDto;
 import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
@@ -52,6 +55,12 @@ public class CategoryControllerIntegrationTest {
         }
 
         private static final String BASE_URL = "/api/v1/categories";
+        private String jwtToken;
+
+        @BeforeEach
+        void setUpJwtToken() throws Exception {
+                jwtToken = TestAuthUtil.obtainJwtToken(mockMvc, objectMapper);
+        }
 
         @Test
         @DisplayName("1. Should create category and return 201 CREATED")
@@ -62,6 +71,7 @@ public class CategoryControllerIntegrationTest {
                 String json = objectMapper.writeValueAsString(requestDto);
 
                 mockMvc.perform(post(BASE_URL)
+                                .header("Authorization", "Bearer " + jwtToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(json))
                                 .andExpect(status().isCreated())
@@ -75,7 +85,8 @@ public class CategoryControllerIntegrationTest {
                 User user = userService.create(TestDataUtil.givenUserA());
                 Category category = categoryService.create(TestDataUtil.givenCategoryA(user));
 
-                mockMvc.perform(get(BASE_URL + "/" + category.getId()))
+                mockMvc.perform(get(BASE_URL + "/" + category.getId())
+                                .header("Authorization", "Bearer " + jwtToken))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.id").value(category.getId().toString()))
                                 .andExpect(jsonPath("$.name").value("Food & Beverage"));
@@ -84,7 +95,8 @@ public class CategoryControllerIntegrationTest {
         @Test
         @DisplayName("3. Should return 404 NOT FOUND for non-existent category")
         public void shouldReturn404WhenCategoryNotFound() throws Exception {
-                mockMvc.perform(get(BASE_URL + "/" + UUID.randomUUID()))
+                mockMvc.perform(get(BASE_URL + "/" + UUID.randomUUID())
+                                .header("Authorization", "Bearer " + jwtToken))
                                 .andExpect(status().isNotFound());
         }
 
@@ -101,6 +113,7 @@ public class CategoryControllerIntegrationTest {
                 String json = objectMapper.writeValueAsString(patchDto);
 
                 mockMvc.perform(patch(BASE_URL + "/" + category.getId())
+                                .header("Authorization", "Bearer " + jwtToken)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(json))
                                 .andExpect(status().isOk())
@@ -113,14 +126,16 @@ public class CategoryControllerIntegrationTest {
                 User user = userService.create(TestDataUtil.givenUserA());
                 Category category = categoryService.create(TestDataUtil.givenCategoryA(user));
 
-                mockMvc.perform(delete(BASE_URL + "/" + category.getId()))
+                mockMvc.perform(delete(BASE_URL + "/" + category.getId())
+                                .header("Authorization", "Bearer " + jwtToken))
                                 .andExpect(status().isNoContent());
         }
 
         @Test
         @DisplayName("6. Should return 404 when deleting non-existent category")
         public void shouldReturn404OnDeleteIfCategoryNotFound() throws Exception {
-                mockMvc.perform(delete(BASE_URL + "/" + UUID.randomUUID()))
+                mockMvc.perform(delete(BASE_URL + "/" + UUID.randomUUID())
+                                .header("Authorization", "Bearer " + jwtToken))
                                 .andExpect(status().isNotFound());
         }
 
@@ -133,7 +148,8 @@ public class CategoryControllerIntegrationTest {
                 categoryService.create(TestDataUtil.givenCategoryB(user));
                 categoryService.create(TestDataUtil.givenCategoryC(user));
 
-                mockMvc.perform(get(BASE_URL + "?page=0&size=10"))
+                mockMvc.perform(get(BASE_URL + "?page=0&size=10")
+                                .header("Authorization", "Bearer " + jwtToken))
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.content").isArray())
                                 .andExpect(jsonPath("$.content.length()").value(3));

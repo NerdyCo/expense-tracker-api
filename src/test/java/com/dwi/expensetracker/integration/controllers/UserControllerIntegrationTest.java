@@ -1,5 +1,6 @@
 package com.dwi.expensetracker.integration.controllers;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.dwi.expensetracker.TestAuthUtil;
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.dtos.user.UserPatchDto;
 import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
@@ -31,7 +33,6 @@ import java.util.UUID;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-// @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Transactional
 @TestExecutionListeners(value = TransactionalTestExecutionListener.class)
 @TestMethodOrder(MethodOrderer.DisplayName.class)
@@ -57,6 +58,12 @@ public class UserControllerIntegrationTest {
     }
 
     private static final String BASE_URL = "/api/v1/users";
+    private String jwtToken;
+
+    @BeforeEach
+    void setUpJwtToken() throws Exception {
+        jwtToken = TestAuthUtil.obtainJwtToken(mockMvc, objectMapper);
+    }
 
     @Test
     @DisplayName("1. Should return create a user and return 201 CREATED")
@@ -65,6 +72,7 @@ public class UserControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(requestDto);
 
         mockMvc.perform(post(BASE_URL)
+                .header("Authorization", "Bearer " + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isCreated())
@@ -78,7 +86,8 @@ public class UserControllerIntegrationTest {
     public void shouldReturn200AndUserDataIfExists() throws Exception {
         User savedUser = userService.create(TestDataUtil.givenUserA());
 
-        mockMvc.perform(get(BASE_URL + "/" + savedUser.getId()))
+        mockMvc.perform(get(BASE_URL + "/" + savedUser.getId())
+                .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(savedUser.getId().toString()))
                 .andExpect(jsonPath("$.username").value("kautsar"))
@@ -90,7 +99,8 @@ public class UserControllerIntegrationTest {
     public void shouldReturn404WhenUserNotFound() throws Exception {
         UUID nonExistentId = UUID.randomUUID();
 
-        mockMvc.perform(get(BASE_URL + "/" + nonExistentId))
+        mockMvc.perform(get(BASE_URL + "/" + nonExistentId)
+                .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -102,6 +112,7 @@ public class UserControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(patchDto);
 
         mockMvc.perform(patch(BASE_URL + "/" + savedUser.getId())
+                .header("Authorization", "Bearer " + jwtToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk())
@@ -113,14 +124,15 @@ public class UserControllerIntegrationTest {
     public void shouldDeleteUser() throws Exception {
         User savedUser = userService.create(TestDataUtil.givenUserA());
 
-        mockMvc.perform(delete(BASE_URL + "/" + savedUser.getId()))
+        mockMvc.perform(delete(BASE_URL + "/" + savedUser.getId())
+                .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     @DisplayName("6. Should return 404 on delete if user does not exist")
     public void shouldReturn404OnDeleteIfNotExist() throws Exception {
-        mockMvc.perform(delete(BASE_URL + "/" + UUID.randomUUID()))
+        mockMvc.perform(delete(BASE_URL + "/" + UUID.randomUUID()).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -129,9 +141,10 @@ public class UserControllerIntegrationTest {
     public void shouldReturnAllUsers() throws Exception {
         userService.create(TestDataUtil.givenUserA());
         userService.create(TestDataUtil.givenUserB());
-        userService.create(TestDataUtil.givenUserC());
+        // userService.create(TestDataUtil.givenUserC());
 
-        mockMvc.perform(get(BASE_URL + "?page=0&size=10"))
+        mockMvc.perform(get(BASE_URL + "?page=0&size=10")
+                .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray())
                 .andExpect(jsonPath("$.content.length()").value(3));
@@ -145,7 +158,8 @@ public class UserControllerIntegrationTest {
         categoryService.create(TestDataUtil.givenCategoryA(user));
         categoryService.create(TestDataUtil.givenCategoryB(user));
 
-        mockMvc.perform(get(BASE_URL + "/" + user.getId() + "/categories"))
+        mockMvc.perform(get(BASE_URL + "/" + user.getId() + "/categories")
+                .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
@@ -159,7 +173,8 @@ public class UserControllerIntegrationTest {
         transactionService.create(TestDataUtil.givenTransactionA(user, category));
         transactionService.create(TestDataUtil.givenTransactionB(user, category));
 
-        mockMvc.perform(get(BASE_URL + "/" + user.getId() + "/transactions"))
+        mockMvc.perform(get(BASE_URL + "/" + user.getId() + "/transactions")
+                .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
     }
