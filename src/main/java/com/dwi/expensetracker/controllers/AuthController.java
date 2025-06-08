@@ -7,10 +7,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dwi.expensetracker.domains.dtos.AuthResponse;
-import com.dwi.expensetracker.domains.dtos.LoginRequest;
+import com.dwi.expensetracker.domains.dtos.auth.AuthResponse;
+import com.dwi.expensetracker.domains.dtos.auth.LoginRequest;
 import com.dwi.expensetracker.services.AuthenticationService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,7 +21,7 @@ public class AuthController {
     private final AuthenticationService authenticationService;
 
     @PostMapping
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
         UserDetails userDetails = authenticationService.authenticate(
                 loginRequest.getEmail(),
                 loginRequest.getPassword());

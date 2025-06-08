@@ -51,16 +51,12 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/users/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/categories/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/transactions/**").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
-
     }
 
     @Bean

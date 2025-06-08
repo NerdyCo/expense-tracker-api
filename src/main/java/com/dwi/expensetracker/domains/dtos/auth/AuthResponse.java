@@ -1,4 +1,4 @@
-package com.dwi.expensetracker.domains.dtos;
+package com.dwi.expensetracker.domains.dtos.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
-    private String email;
-    private String password;
+public class AuthResponse {
+    private String token;
+    private long expiresIn;
 }
