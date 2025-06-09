@@ -17,6 +17,8 @@ import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.security.AppUserDetailsService;
 import com.dwi.expensetracker.security.JwtAuthenticationFilter;
+import com.dwi.expensetracker.security.authhandlers.CustomAccessDeniedHandler;
+import com.dwi.expensetracker.security.authhandlers.CustomAuthenticationEntryPoint;
 import com.dwi.expensetracker.services.AuthenticationService;
 
 @Configuration
@@ -47,13 +49,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(
             HttpSecurity http,
-            JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+            CustomAccessDeniedHandler customAccessDeniedHandler) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
