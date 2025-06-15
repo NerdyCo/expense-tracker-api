@@ -1,6 +1,7 @@
 package com.dwi.expensetracker;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Map;
@@ -22,10 +23,12 @@ public class TestAuthUtil {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(loginPayload))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.accessToken").exists())
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
         JsonNode jsonNode = objectMapper.readTree(response);
-        return jsonNode.get("token").asText();
+
+        return jsonNode.get("accessToken").asText();
     }
 }

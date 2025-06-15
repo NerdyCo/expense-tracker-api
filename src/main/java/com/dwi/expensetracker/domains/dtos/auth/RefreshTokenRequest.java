@@ -1,21 +1,16 @@
 package com.dwi.expensetracker.domains.dtos.auth;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class AuthResponse {
-    @Builder.Default
-    private String tokenType = "Bearer";
-
-    private String accessToken;
-
+@NoArgsConstructor
+@Builder
+public class RefreshTokenRequest {
+    @NotBlank(message = "Refresh token must not be blank")
     private String refreshToken;
-
-    private long expiresIn;
 }

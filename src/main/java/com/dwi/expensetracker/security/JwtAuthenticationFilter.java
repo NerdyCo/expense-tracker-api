@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final AuthenticationService authenticationService;
+    private final TokenBlacklistService tokenBlacklistService;
 
     @Override
     protected void doFilterInternal(
@@ -31,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = extractToken(request);
-            if (token != null) {
+            if (token != null && !tokenBlacklistService.isTokenBlacklisted(token)) {
                 UserDetails userDetails = authenticationService.validateToken(token);
 
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         } catch (Exception ex) {
             // Do not throw exception, just don't authenticate the user
-            log.warn("Received invalid auth token");
+            log.warn("Authentication error: {}", ex.getMessage());
         }
 
         filterChain.doFilter(request, response);

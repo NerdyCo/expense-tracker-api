@@ -17,6 +17,7 @@ import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.security.AppUserDetailsService;
 import com.dwi.expensetracker.security.JwtAuthenticationFilter;
+import com.dwi.expensetracker.security.TokenBlacklistService;
 import com.dwi.expensetracker.security.authhandlers.CustomAccessDeniedHandler;
 import com.dwi.expensetracker.security.authhandlers.CustomAuthenticationEntryPoint;
 import com.dwi.expensetracker.services.AuthenticationService;
@@ -24,8 +25,10 @@ import com.dwi.expensetracker.services.AuthenticationService;
 @Configuration
 public class SecurityConfig {
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(AuthenticationService authenticationService) {
-        return new JwtAuthenticationFilter(authenticationService);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(
+            AuthenticationService authenticationService,
+            TokenBlacklistService tokenBlacklistService) {
+        return new JwtAuthenticationFilter(authenticationService, tokenBlacklistService);
     }
 
     @Bean
@@ -54,7 +57,11 @@ public class SecurityConfig {
             CustomAccessDeniedHandler customAccessDeniedHandler) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/api/v1/auth/login",
+                                "/api/v1/auth/refresh")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/logout").authenticated()
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
