@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: expensetracker
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/expense-tracker
+    username: postgres
+    password: nerdyco
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+jwt:
+  secret: your-256-bit-secret-key-here-make-it-at-least-32-bytes-long
