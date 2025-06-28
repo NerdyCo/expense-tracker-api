@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -36,40 +37,32 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
     private final CategoryService categoryService;
     private final TransactionService transactionService;
     private final Mapper<User, UserBaseDto> userBaseMapper;
-    private final Mapper<User, UserRequestDto> userRequestMapper;
-    private final Mapper<User, UserPatchDto> userPatchMapper;
     private final Mapper<Category, CategoryBaseDto> categoryBaseMapper;
     private final Mapper<Transaction, TransactionBaseDto> transactionBaseMapper;
 
-    @PostMapping
-    public ResponseEntity<UserBaseDto> createUser(@Valid @RequestBody UserRequestDto requestDto) {
-        User userToCreate = userRequestMapper.toEntity(requestDto);
-        User createdUser = userService.create(userToCreate);
-        UserBaseDto responseDto = userBaseMapper.toDto(createdUser);
-
-        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
-    }
-
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<UserBaseDto>> getAllUsers(Pageable pageable) {
         Page<UserBaseDto> users = userService.getAll(pageable).map(userBaseMapper::toDto);
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserBaseDto> getUserById(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<UserBaseDto> getUserById(@PathVariable String id) {
         User user = userService.getById(id);
         return ResponseEntity.ok(userBaseMapper.toDto(user));
     }
 
     @GetMapping("/{id}/categories")
-    public ResponseEntity<List<CategoryBaseDto>> getUserCategories(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<CategoryBaseDto>> getUserCategories(@PathVariable String id) {
         List<Category> categories = categoryService.getByUserId(id);
-
         return ResponseEntity.ok(
                 categories.stream()
                         .map(categoryBaseMapper::toDto)
@@ -77,29 +70,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}/transactions")
-    public ResponseEntity<List<TransactionBaseDto>> getUserTransactions(@PathVariable UUID id) {
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<List<TransactionBaseDto>> getUserTransactions(@PathVariable String id) {
         List<Transaction> transactions = transactionService.getByUserId(id);
-
         return ResponseEntity.ok(
                 transactions.stream()
                         .map(transactionBaseMapper::toDto)
                         .toList());
-    }
-
-    @PatchMapping("/{id}")
-    public ResponseEntity<UserBaseDto> updateUserPartially(
-            @PathVariable UUID id,
-            @Valid @RequestBody UserPatchDto userDto) {
-        User updateRequest = userPatchMapper.toEntity(userDto);
-        User updatedUser = userService.updatePartial(id, updateRequest);
-
-        return ResponseEntity.ok(userBaseMapper.toDto(updatedUser));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
-        userService.deleteById(id);
-
-        return ResponseEntity.noContent().build();
     }
 }
