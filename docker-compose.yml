@@ -9,3 +9,20 @@ services:
     environment:
       POSTGRES_DB: expense-tracker
       POSTGRES_PASSWORD: nerdyco
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.0.2
+    ports:
+      - "8080:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: nerdyco
+    depends_on:
+      - db
+    command: start-dev

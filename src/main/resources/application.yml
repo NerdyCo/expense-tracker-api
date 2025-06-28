@@ -12,5 +12,17 @@ spring:
     hibernate:
       ddl-auto: update
 
-jwt:
-  secret: your-256-bit-secret-key-here-make-it-at-least-32-bytes-long
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/expense-realm
+          jwk-set-uri: http://localhost:8080/realms/expense-realm/protocol/openid-connect/certs
+
+keycloak:
+  server-url: http://localhost:8080
+  realm: expense-realm
+  client-id: expense-tracker-admin
+  client-secret: 9cT1lnx8DjVEvptnw1psWveXimMMXdrb
+  admin-username: admin
+  admin-password: admin
