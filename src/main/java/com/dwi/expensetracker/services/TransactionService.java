@@ -15,7 +15,7 @@ public interface TransactionService {
 
     Transaction getById(UUID id);
 
-    List<Transaction> getByUserId(UUID userId);
+    List<Transaction> getByUserId(String userId);
 
     Transaction updatePartial(UUID id, Transaction transaction);
 

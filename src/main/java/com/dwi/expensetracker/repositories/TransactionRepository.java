@@ -10,5 +10,5 @@ import com.dwi.expensetracker.domains.entities.Transaction;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, UUID> {
-    List<Transaction> findByUserId(UUID userId);
+    List<Transaction> findByUserId(String userId);
 }

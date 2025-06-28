@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,7 +37,13 @@ public class TransactionController {
     private final Mapper<Transaction, TransactionPatchDto> transactionPatchMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TransactionBaseDto> createTransaction(@Valid @RequestBody TransactionRequestDto requestDto) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!userId.equals(requestDto.getUserId())) {
+            throw new IllegalStateException("You can only create transactions for yourself");
+        }
+
         Transaction transactionToCreate = transactionRequestMapper.toEntity(requestDto);
         Transaction createdTransaction = transactionService.create(transactionToCreate);
         TransactionBaseDto responseDto = transactionBaseMapper.toDto(createdTransaction);
@@ -44,6 +52,7 @@ public class TransactionController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<TransactionBaseDto>> getAllTransactions(Pageable pageable) {
         Page<TransactionBaseDto> transactions = transactionService.getAll(pageable).map(transactionBaseMapper::toDto);
 
@@ -51,16 +60,31 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER','ADMIN')")
     public ResponseEntity<TransactionBaseDto> getTransactionById(@PathVariable UUID id) {
         Transaction transaction = transactionService.getById(id);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!transaction.getUser().getId().equals(userId) && !SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new IllegalStateException("You can only view your own transactions");
+        }
 
         return ResponseEntity.ok(transactionBaseMapper.toDto(transaction));
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<TransactionBaseDto> updateTransactionPartially(
             @PathVariable UUID id,
             @Valid @RequestBody TransactionPatchDto patchDto) {
+        Transaction transaction = transactionService.getById(id);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!transaction.getUser().getId().equals(userId)) {
+            throw new IllegalStateException("You can only update your own transactions");
+        }
+
         Transaction patchRequest = transactionPatchMapper.toEntity(patchDto);
         Transaction updateTransaction = transactionService.updatePartial(id, patchRequest);
 
@@ -68,7 +92,15 @@ public class TransactionController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteTransaction(@PathVariable UUID id) {
+        Transaction transaction = transactionService.getById(id);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!transaction.getUser().getId().equals(userId)) {
+            throw new IllegalStateException("You can only delete your own transactions");
+        }
+
         transactionService.deleteById(id);
 
         return ResponseEntity.noContent().build();

@@ -21,9 +21,12 @@ public class TransactionRequestMapperImpl implements Mapper<Transaction, Transac
 
     @Override
     public Transaction toEntity(TransactionRequestDto dto) {
-        // set user and category from ID
         User user = userService.getById(dto.getUserId());
         Category category = categoryService.getById(dto.getCategoryId());
+
+        if (!category.getUser().getId().equals(dto.getUserId())) {
+            throw new IllegalArgumentException("Category does not belong to the user");
+        }
 
         return Transaction.builder()
                 .user(user)

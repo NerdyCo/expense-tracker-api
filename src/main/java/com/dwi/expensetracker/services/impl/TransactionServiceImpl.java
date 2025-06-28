@@ -8,7 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.domains.entities.Transaction;
+import com.dwi.expensetracker.repositories.CategoryRepository;
 import com.dwi.expensetracker.repositories.TransactionRepository;
 import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.services.TransactionService;
@@ -23,9 +25,26 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
     @Override
+    @Transactional
     public Transaction create(Transaction transaction) {
+        String userId = transaction.getUser().getId();
+        UUID categoryId = transaction.getCategory().getId();
+
+        // validate user exists
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User not found with ID " + userId);
+        }
+
+        // validate category exists and belongs to user
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + categoryId));
+        if (!category.getUser().getId().equals(userId)) {
+            throw new IllegalArgumentException("Category does not belong to the user");
+        }
+
         return transactionRepository.save(transaction);
     }
 
@@ -48,7 +67,18 @@ public class TransactionServiceImpl implements TransactionService {
             Optional.ofNullable(transaction.getType()).ifPresent(existing::setType);
             Optional.ofNullable(transaction.getDescription()).ifPresent(existing::setDescription);
             Optional.ofNullable(transaction.getDate()).ifPresent(existing::setDate);
-            Optional.ofNullable(transaction.getCategory()).ifPresent(existing::setCategory);
+
+            if (transaction.getCategory() != null) {
+                UUID categoryId = transaction.getCategory().getId();
+                Category category = categoryRepository.findById(categoryId)
+                        .orElseThrow(() -> new EntityNotFoundException("Category not found with ID " + categoryId));
+
+                if (!category.getUser().getId().equals(existing.getUser().getId())) {
+                    throw new IllegalArgumentException("Category does not belong to the user");
+                }
+
+                existing.setCategory(category);
+            }
 
             if (transaction.getUser() != null && !transaction.getUser().getId().equals(existing.getUser().getId())) {
                 throw new IllegalArgumentException("User cannot be changed for a transaction");
@@ -69,7 +99,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    public List<Transaction> getByUserId(UUID userId) {
+    public List<Transaction> getByUserId(String userId) {
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("User not found with ID " + userId);
         }
