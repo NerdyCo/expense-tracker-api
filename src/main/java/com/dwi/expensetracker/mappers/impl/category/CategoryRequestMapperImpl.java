@@ -20,19 +20,17 @@ public class CategoryRequestMapperImpl implements Mapper<Category, CategoryReque
     @Override
     public Category toEntity(CategoryRequestDto dto) {
         Category category = modelMapper.map(dto, Category.class);
-
         category.setId(null);
-
-        // convert userId into User entity
         User user = userService.getById(dto.getUserId());
         category.setUser(user);
-
         return category;
     }
 
     @Override
     public CategoryRequestDto toDto(Category entity) {
-        return modelMapper.map(entity, CategoryRequestDto.class);
+        CategoryRequestDto dto = modelMapper.map(entity, CategoryRequestDto.class);
+        dto.setUserId(entity.getUser().getId());
+        return dto;
     }
 
 }

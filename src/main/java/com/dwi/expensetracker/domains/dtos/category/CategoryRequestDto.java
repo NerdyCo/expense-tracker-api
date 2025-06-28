@@ -1,7 +1,5 @@
 package com.dwi.expensetracker.domains.dtos.category;
 
-import java.util.UUID;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -16,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CategoryRequestDto {
     @NotNull(message = "User ID is required")
-    private UUID userId;
+    private String userId;
 
     @NotBlank(message = "Category name is required")
     @Size(min = 3, max = 50, message = "Category name must be between {min} and {max} characters")

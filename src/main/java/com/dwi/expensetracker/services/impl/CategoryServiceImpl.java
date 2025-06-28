@@ -27,7 +27,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public Category create(Category category) {
-        UUID userId = category.getUser().getId();
+        String userId = category.getUser().getId();
 
         if (categoryRepository.existsByUserIdAndName(userId, category.getName())) {
             throw new DuplicateResourceException("Category name already exists for this user");
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements CategoryService {
                     // handle uniqueness name check
                     if (category.getName() != null && !category.getName().equals(existing.getName())) {
                         if (categoryRepository.existsByUserIdAndName(existing.getUser().getId(), category.getName())) {
-                            throw new DuplicateResourceException("Catergory name already exists for this user");
+                            throw new DuplicateResourceException("Category name already exists for this user");
                         }
 
                         existing.setName(category.getName());
@@ -81,7 +81,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<Category> getByUserId(UUID userId) {
+    public List<Category> getByUserId(String userId) {
         if (!userRepository.existsById(userId)) {
             throw new EntityNotFoundException("User not found with ID " + userId);
         }

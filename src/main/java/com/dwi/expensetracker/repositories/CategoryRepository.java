@@ -13,10 +13,10 @@ import com.dwi.expensetracker.domains.entities.Category;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
-    boolean existsByUserIdAndName(UUID userId, String name);
+    boolean existsByUserIdAndName(String userId, String name);
 
     @Query("SELECT c FROM Category c JOIN FETCH c.user WHERE c.id = :id")
     Optional<Category> findByIdWithUser(@Param("id") UUID id);
 
-    List<Category> findByUserId(UUID userId);
+    List<Category> findByUserId(String userId);
 }

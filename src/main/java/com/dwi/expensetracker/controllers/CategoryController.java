@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -35,7 +37,13 @@ public class CategoryController {
     private final Mapper<Category, CategoryPatchDto> categoryPatchMapper;
 
     @PostMapping
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CategoryBaseDto> createCategory(@Valid @RequestBody CategoryRequestDto requestDto) {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!userId.equals(requestDto.getUserId())) {
+            throw new IllegalStateException("You can only create categories for yourself");
+        }
+
         Category categoryTocreate = categoryRequestMapper.toEntity(requestDto);
         Category createdCategory = categoryService.create(categoryTocreate);
         CategoryBaseDto responseDto = categoryBaseMapper.toDto(createdCategory);
@@ -44,6 +52,7 @@ public class CategoryController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<CategoryBaseDto>> getAllCategories(Pageable pageable) {
         Page<CategoryBaseDto> categories = categoryService.getAll(pageable).map(categoryBaseMapper::toDto);
 
@@ -51,16 +60,34 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER','ADMIN')")
     public ResponseEntity<CategoryBaseDto> getCategoryById(@PathVariable UUID id) {
         Category category = categoryService.getById(id);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        // only allow user to view their own categories or admin to view all categories
+        if (!category.getUser().getId().equals(userId) &&
+                !SecurityContextHolder
+                        .getContext().getAuthentication()
+                        .getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"))) {
+            throw new IllegalStateException("You can only view your own categories");
+        }
 
         return ResponseEntity.ok(categoryBaseMapper.toDto(category));
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<CategoryBaseDto> updateCategoryPartially(
             @PathVariable UUID id,
             @Valid @RequestBody CategoryPatchDto patchDto) {
+        Category category = categoryService.getById(id);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!category.getUser().getId().equals(userId)) {
+            throw new IllegalStateException("You can only update your own categories");
+        }
+
         Category patchRequest = categoryPatchMapper.toEntity(patchDto);
         Category updatedCategory = categoryService.updatePartial(id, patchRequest);
 
@@ -68,7 +95,15 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
+        Category category = categoryService.getById(id);
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        if (!category.getUser().getId().equals(userId)) {
+            throw new IllegalStateException("You can only delete your own categories");
+        }
+
         categoryService.deleteById(id);
 
         return ResponseEntity.noContent().build();

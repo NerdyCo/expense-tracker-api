@@ -15,7 +15,7 @@ public interface CategoryService {
 
     Category getById(UUID id);
 
-    List<Category> getByUserId(UUID userId);
+    List<Category> getByUserId(String userId);
 
     Category updatePartial(UUID id, Category category);
 
