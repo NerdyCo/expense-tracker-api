@@ -35,9 +35,9 @@ public class TestDataUtil {
         private static final LocalDate DATE_B = LocalDate.of(2025, 5, 3);
         private static final LocalDate DATE_C = LocalDate.of(2025, 5, 5);
 
-        private static final String USER_ID_A = UUID.randomUUID().toString();
-        private static final String USER_ID_B = UUID.randomUUID().toString();
-        private static final String USER_ID_C = UUID.randomUUID().toString();
+        public static final String USER_ID_A = UUID.randomUUID().toString();
+        public static final String USER_ID_B = UUID.randomUUID().toString();
+        public static final String USER_ID_C = UUID.randomUUID().toString();
 
         // === USER ===
         public static User givenUserA() {
