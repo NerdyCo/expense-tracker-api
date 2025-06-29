@@ -12,33 +12,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.domains.entities.User;
+import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.services.CategoryService;
-import com.dwi.expensetracker.services.UserService;
 
 @SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@ActiveProfiles("test")
+@Transactional
 @TestMethodOrder(MethodOrderer.DisplayName.class)
+@DisplayName("Integration tests for CategoryServiceImpl")
 public class CategoryServiceIntegrationTest {
     private final CategoryService underTest;
-    private final UserService userService;
+    private final UserRepository userRepository;
 
     @Autowired
-    public CategoryServiceIntegrationTest(
-            CategoryService underTest,
-            UserService userService) {
+    public CategoryServiceIntegrationTest(CategoryService underTest, UserRepository userRepository) {
         this.underTest = underTest;
-        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @Test
     @DisplayName("1. Should create a category and retrieve it successfully")
     public void shouldCreateAndRetrieveCategory() {
-        User user = userService.create(TestDataUtil.givenUserA());
+        User user = TestDataUtil.givenUserA();
+        userRepository.save(user);
         Category category = TestDataUtil.givenCategoryA(user);
 
         Category savedCategory = underTest.create(category);
@@ -52,9 +54,10 @@ public class CategoryServiceIntegrationTest {
     @Test
     @DisplayName("2. Should create multiple categories and retrieve all")
     public void shouldCreateMultipleCategoriesAndRetrieveAll() {
-        User userA = userService.create(TestDataUtil.givenUserA());
-        User userB = userService.create(TestDataUtil.givenUserB());
-        User userC = userService.create(TestDataUtil.givenUserC());
+        User userA = TestDataUtil.givenUserA();
+        User userB = TestDataUtil.givenUserB();
+        User userC = TestDataUtil.givenUserC();
+        userRepository.saveAll(List.of(userA, userB, userC));
 
         underTest.create(TestDataUtil.givenCategoryA(userA));
         underTest.create(TestDataUtil.givenCategoryB(userB));
@@ -71,7 +74,8 @@ public class CategoryServiceIntegrationTest {
     @Test
     @DisplayName("3. Should partially update a category")
     public void shouldPartiallyUpdateCategory() {
-        User user = userService.create(TestDataUtil.givenUserA());
+        User user = TestDataUtil.givenUserA();
+        userRepository.save(user);
         Category savedCategory = underTest.create(TestDataUtil.givenCategoryA(user));
 
         Category updateRequest = Category.builder()
@@ -87,7 +91,8 @@ public class CategoryServiceIntegrationTest {
     @Test
     @DisplayName("4. Should delete category successfully")
     public void shouldDeleteCategory() {
-        User user = userService.create(TestDataUtil.givenUserA());
+        User user = TestDataUtil.givenUserA();
+        userRepository.save(user);
         Category category = TestDataUtil.givenCategoryA(user);
         Category savedCategory = underTest.create(category);
 
@@ -103,12 +108,24 @@ public class CategoryServiceIntegrationTest {
     @Test
     @DisplayName("5. Should return categories by user ID")
     public void shouldReturnCategoriesByUserId() {
-        User user = userService.create(TestDataUtil.givenUserA());
+        User user = TestDataUtil.givenUserA();
+        userRepository.save(user);
         Category categoryA = underTest.create(TestDataUtil.givenCategoryA(user));
         Category categoryB = underTest.create(TestDataUtil.givenCategoryB(user));
 
         List<Category> result = underTest.getByUserId(user.getId());
 
         assertThat(result).containsExactlyInAnyOrder(categoryA, categoryB);
+    }
+
+    @Test
+    @DisplayName("6. Should return empty list when no categories exist for user")
+    public void shouldReturnEmptyListWhenNoCategories() {
+        User user = TestDataUtil.givenUserA();
+        userRepository.save(user);
+
+        List<Category> result = underTest.getByUserId(user.getId());
+
+        assertThat(result).isEmpty();
     }
 }
