@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.Category;
@@ -22,8 +23,11 @@ import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.repositories.TransactionRepository;
 
 @DataJpaTest
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
+@DisplayName("Integration tests for TransactionRepository")
 public class TransactionRepositoryIntegrationTest {
+
     private final TransactionRepository underTest;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -39,11 +43,11 @@ public class TransactionRepositoryIntegrationTest {
     @Test
     @DisplayName("1. Should create and retrieve a transaction by ID")
     public void shouldCreateAndRetrieveTransactionById() {
-        User user = userRepository.save(TestDataUtil.givenUserA());
-        Category category = categoryRepository.save(TestDataUtil.givenCategoryA(user));
+        User user = userRepository.saveAndFlush(TestDataUtil.givenUserA());
+        Category category = categoryRepository.saveAndFlush(TestDataUtil.givenCategoryA(user));
         Transaction transaction = TestDataUtil.givenTransactionA(user, category);
 
-        underTest.save(transaction);
+        underTest.saveAndFlush(transaction);
         Optional<Transaction> result = underTest.findById(transaction.getId());
 
         assertThat(result).isPresent();
@@ -55,14 +59,14 @@ public class TransactionRepositoryIntegrationTest {
     @Test
     @DisplayName("2. Should create multiple transactions and retrieve all")
     public void shouldCreateMultipleTransactionsAndRetrieveAll() {
-        User user = userRepository.save(TestDataUtil.givenUserA());
-        Category category = categoryRepository.save(TestDataUtil.givenCategoryA(user));
+        User user = userRepository.saveAndFlush(TestDataUtil.givenUserA());
+        Category category = categoryRepository.saveAndFlush(TestDataUtil.givenCategoryA(user));
 
         Transaction transactionA = TestDataUtil.givenTransactionA(user, category);
         Transaction transactionB = TestDataUtil.givenTransactionB(user, category);
         Transaction transactionC = TestDataUtil.givenTransactionC(user, category);
 
-        underTest.saveAll(List.of(transactionA, transactionB, transactionC));
+        underTest.saveAllAndFlush(List.of(transactionA, transactionB, transactionC));
         List<Transaction> result = underTest.findAll();
 
         assertThat(result)
@@ -81,14 +85,27 @@ public class TransactionRepositoryIntegrationTest {
     @Test
     @DisplayName("4. Should find transactions by user ID")
     public void shouldFindTransactionsByUserId() {
-        User user = userRepository.save(TestDataUtil.givenUserA());
-        Category category = categoryRepository.save(TestDataUtil.givenCategoryA(user));
+        User user = userRepository.saveAndFlush(TestDataUtil.givenUserA());
+        Category category = categoryRepository.saveAndFlush(TestDataUtil.givenCategoryA(user));
         Transaction transactionA = TestDataUtil.givenTransactionA(user, category);
         Transaction transactionB = TestDataUtil.givenTransactionB(user, category);
 
-        underTest.saveAll(List.of(transactionA, transactionB));
+        underTest.saveAllAndFlush(List.of(transactionA, transactionB));
         List<Transaction> result = underTest.findByUserId(user.getId());
 
-        assertThat(result).hasSize(2);
+        assertThat(result)
+                .hasSize(2)
+                .extracting(Transaction::getDescription)
+                .containsExactlyInAnyOrder("Lunch with friends", "Freelance project");
+    }
+
+    @Test
+    @DisplayName("5. Should return empty list when no transactions exist for user")
+    public void shouldReturnEmptyListWhenNoTransactionsForUser() {
+        User user = userRepository.saveAndFlush(TestDataUtil.givenUserA());
+
+        List<Transaction> result = underTest.findByUserId(user.getId());
+
+        assertThat(result).isEmpty();
     }
 }

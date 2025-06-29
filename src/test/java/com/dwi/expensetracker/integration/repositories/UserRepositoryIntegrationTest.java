@@ -11,14 +11,18 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import com.dwi.expensetracker.TestDataUtil;
 import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.repositories.UserRepository;
 
 @DataJpaTest
+@ActiveProfiles("test")
 @TestMethodOrder(MethodOrderer.DisplayName.class)
+@DisplayName("Integration tests for UserRepository")
 public class UserRepositoryIntegrationTest {
+
     private final UserRepository underTest;
 
     @Autowired
@@ -31,7 +35,7 @@ public class UserRepositoryIntegrationTest {
     public void shouldSaveAndRetrieveUserById() {
         User user = TestDataUtil.givenUserA();
 
-        underTest.save(user);
+        underTest.saveAndFlush(user);
         Optional<User> result = underTest.findById(user.getId());
 
         assertThat(result).isPresent();
@@ -44,7 +48,7 @@ public class UserRepositoryIntegrationTest {
         User userA = TestDataUtil.givenUserA();
         User userB = TestDataUtil.givenUserB();
 
-        underTest.saveAll(List.of(userA, userB));
+        underTest.saveAllAndFlush(List.of(userA, userB));
         List<User> result = underTest.findAll();
 
         assertThat(result)
@@ -56,7 +60,7 @@ public class UserRepositoryIntegrationTest {
     @DisplayName("3. Should return true if user exists by email")
     public void shouldCheckUserExistsByEmail() {
         User user = TestDataUtil.givenUserA();
-        underTest.save(user);
+        underTest.saveAndFlush(user);
 
         boolean exists = underTest.existsByEmail("kautsar@gmail.com");
 
@@ -67,7 +71,7 @@ public class UserRepositoryIntegrationTest {
     @DisplayName("4. Should return true if user exists by username")
     public void shouldCheckUserExistsByUsername() {
         User user = TestDataUtil.givenUserA();
-        underTest.save(user);
+        underTest.saveAndFlush(user);
 
         boolean exists = underTest.existsByUsername("kautsar");
 
@@ -82,5 +86,13 @@ public class UserRepositoryIntegrationTest {
 
         assertThat(emailExists).isFalse();
         assertThat(usernameExists).isFalse();
+    }
+
+    @Test
+    @DisplayName("6. Should return empty when user not found by ID")
+    public void shouldReturnEmptyWhenUserNotFoundById() {
+        Optional<User> result = underTest.findById("nonexistent-id");
+
+        assertThat(result).isNotPresent();
     }
 }
