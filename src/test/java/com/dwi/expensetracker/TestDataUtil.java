@@ -4,18 +4,19 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
+import com.dwi.expensetracker.domains.dtos.auth.RegisterUserDto;
 import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
-import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
-import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
-import com.dwi.expensetracker.domains.dtos.user.UserRequestDto;
+import com.dwi.expensetracker.domains.dtos.transaction.TransactionRequestDto;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.domains.enums.TransactionType;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class TestDataUtil {
-        // === constants ===
+        // === Constants ===
         private static final String EMAIL_A = "kautsar@gmail.com";
         private static final String EMAIL_B = "teguh@gmail.com";
         private static final String EMAIL_C = "dwi@gmail.com";
@@ -34,41 +35,45 @@ public class TestDataUtil {
         private static final LocalDate DATE_B = LocalDate.of(2025, 5, 3);
         private static final LocalDate DATE_C = LocalDate.of(2025, 5, 5);
 
+        private static final String USER_ID_A = UUID.randomUUID().toString();
+        private static final String USER_ID_B = UUID.randomUUID().toString();
+        private static final String USER_ID_C = UUID.randomUUID().toString();
+
         // === USER ===
         public static User givenUserA() {
-                return createUser(EMAIL_A, USERNAME_A, PASSWORD);
+                return createUser(USER_ID_A, EMAIL_A, USERNAME_A);
         }
 
         public static User givenUserB() {
-                return createUser(EMAIL_B, USERNAME_B, PASSWORD);
+                return createUser(USER_ID_B, EMAIL_B, USERNAME_B);
         }
 
         public static User givenUserC() {
-                return createUser(EMAIL_C, USERNAME_C, PASSWORD);
+                return createUser(USER_ID_C, EMAIL_C, USERNAME_C);
         }
 
-        public static UserRequestDto givenUserRequestDtoA() {
-                return createUserRequestDto(EMAIL_A, USERNAME_A, PASSWORD);
+        public static RegisterUserDto givenRegisterUserDtoA() {
+                return createRegisterUserDto(EMAIL_A, USERNAME_A, PASSWORD);
         }
 
-        public static UserRequestDto givenUserRequestDtoB() {
-                return createUserRequestDto(EMAIL_B, USERNAME_B, PASSWORD);
+        public static RegisterUserDto givenRegisterUserDtoB() {
+                return createRegisterUserDto(EMAIL_B, USERNAME_B, PASSWORD);
         }
 
-        public static UserRequestDto givenUserRequestDtoC() {
-                return createUserRequestDto(EMAIL_C, USERNAME_C, PASSWORD);
+        public static RegisterUserDto givenRegisterUserDtoC() {
+                return createRegisterUserDto(EMAIL_C, USERNAME_C, PASSWORD);
         }
 
-        private static User createUser(String email, String username, String password) {
+        private static User createUser(String id, String email, String username) {
                 return User.builder()
+                                .id(id)
                                 .email(email)
                                 .username(username)
-                                .password(password)
                                 .build();
         }
 
-        private static UserRequestDto createUserRequestDto(String email, String username, String password) {
-                return UserRequestDto.builder()
+        private static RegisterUserDto createRegisterUserDto(String email, String username, String password) {
+                return RegisterUserDto.builder()
                                 .email(email)
                                 .username(username)
                                 .password(password)
@@ -88,15 +93,15 @@ public class TestDataUtil {
                 return createCategory(user, "Hobby");
         }
 
-        public static CategoryRequestDto givenCategoryDtoA(UUID userId) {
+        public static CategoryRequestDto givenCategoryDtoA(String userId) {
                 return createCategoryDto(userId, "Food & Beverage");
         }
 
-        public static CategoryRequestDto givenCategoryDtoB(UUID userId) {
+        public static CategoryRequestDto givenCategoryDtoB(String userId) {
                 return createCategoryDto(userId, "Transportation");
         }
 
-        public static CategoryRequestDto givenCategoryDtoC(UUID userId) {
+        public static CategoryRequestDto givenCategoryDtoC(String userId) {
                 return createCategoryDto(userId, "Hobby");
         }
 
@@ -107,7 +112,7 @@ public class TestDataUtil {
                                 .build();
         }
 
-        private static CategoryRequestDto createCategoryDto(UUID userId, String name) {
+        private static CategoryRequestDto createCategoryDto(String userId, String name) {
                 return CategoryRequestDto.builder()
                                 .userId(userId)
                                 .name(name)
@@ -128,18 +133,19 @@ public class TestDataUtil {
                 return createTransaction(user, category, AMOUNT_C, TransactionType.EXPENSE, "Coffee", DATE_C);
         }
 
-        public static TransactionBaseDto givenTransactionDtoA(UserBaseDto user, CategoryBaseDto category) {
-                return createTransactionDto(user, category, AMOUNT_A, TransactionType.EXPENSE, "Lunch with friends",
-                                DATE_A);
+        public static TransactionRequestDto givenTransactionRequestDtoA(String userId, UUID categoryId) {
+                return createTransactionRequestDto(userId, categoryId, AMOUNT_A, TransactionType.EXPENSE,
+                                "Lunch with friends", DATE_A);
         }
 
-        public static TransactionBaseDto givenTransactionDtoB(UserBaseDto user, CategoryBaseDto category) {
-                return createTransactionDto(user, category, AMOUNT_B, TransactionType.INCOME, "Freelance project",
-                                DATE_B);
+        public static TransactionRequestDto givenTransactionRequestDtoB(String userId, UUID categoryId) {
+                return createTransactionRequestDto(userId, categoryId, AMOUNT_B, TransactionType.INCOME,
+                                "Freelance project", DATE_B);
         }
 
-        public static TransactionBaseDto givenTransactionDtoC(UserBaseDto user, CategoryBaseDto category) {
-                return createTransactionDto(user, category, AMOUNT_C, TransactionType.EXPENSE, "Coffee", DATE_C);
+        public static TransactionRequestDto givenTransactionRequestDtoC(String userId, UUID categoryId) {
+                return createTransactionRequestDto(userId, categoryId, AMOUNT_C, TransactionType.EXPENSE, "Coffee",
+                                DATE_C);
         }
 
         private static Transaction createTransaction(User user, Category category, BigDecimal amount,
@@ -154,12 +160,11 @@ public class TestDataUtil {
                                 .build();
         }
 
-        private static TransactionBaseDto createTransactionDto(UserBaseDto user, CategoryBaseDto category,
-                        BigDecimal amount, TransactionType type,
-                        String description, LocalDate date) {
-                return TransactionBaseDto.builder()
-                                .user(user)
-                                .category(category)
+        private static TransactionRequestDto createTransactionRequestDto(String userId, UUID categoryId,
+                        BigDecimal amount, TransactionType type, String description, LocalDate date) {
+                return TransactionRequestDto.builder()
+                                .userId(userId)
+                                .categoryId(categoryId)
                                 .amount(amount)
                                 .type(type)
                                 .description(description)
