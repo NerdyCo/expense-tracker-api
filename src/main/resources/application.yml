@@ -1,17 +1,16 @@
 spring:
   application:
     name: expensetracker
-
+  server:
+    port: 8081
   datasource:
     url: jdbc:postgresql://localhost:5432/expense-tracker
     username: postgres
     password: nerdyco
     driver-class-name: org.postgresql.Driver
-
   jpa:
     hibernate:
       ddl-auto: update
-
   security:
     oauth2:
       resourceserver:

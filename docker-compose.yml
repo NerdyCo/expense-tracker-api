@@ -10,6 +10,7 @@ services:
       POSTGRES_DB: expense-tracker
       POSTGRES_PASSWORD: nerdyco
     volumes:
+      - pgdata:/var/lib/postgresql/data
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
 
   keycloak:
@@ -25,4 +26,10 @@ services:
       KC_DB_PASSWORD: nerdyco
     depends_on:
       - db
+    volumes:
+      - keycloak-data:/opt/keycloak/data
     command: start-dev
+
+volumes:
+  pgdata:
+  keycloak-data:
