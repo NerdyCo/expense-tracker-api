@@ -1,8 +1,9 @@
+server:
+  port: 8081
+  
 spring:
   application:
     name: expensetracker
-  server:
-    port: 8081
   datasource:
     url: jdbc:postgresql://localhost:5432/expense-tracker
     username: postgres
@@ -15,13 +16,17 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/expense-realm
-          jwk-set-uri: http://localhost:8080/realms/expense-realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:5050/realms/expense-realm
+          jwk-set-uri: http://localhost:5050/realms/expense-realm/protocol/openid-connect/certs
 
 keycloak:
-  server-url: http://localhost:8080
+  server-url: http://localhost:5050
   realm: expense-realm
   client-id: expense-tracker-admin
-  client-secret: 9cT1lnx8DjVEvptnw1psWveXimMMXdrb
+  client-secret: "UBtQnrk3q3vTeoYzIH9ozrn4URpHnoph"
   admin-username: admin
   admin-password: admin
+
+logging:
+  level:
+    org.springframework.web.servlet.mvc: DEBUG
