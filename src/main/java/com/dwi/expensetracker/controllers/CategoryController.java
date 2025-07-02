@@ -60,7 +60,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<CategoryBaseDto> getCategoryById(@PathVariable UUID id) {
         Category category = categoryService.getById(id);
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();

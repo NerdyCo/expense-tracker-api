@@ -60,7 +60,7 @@ public class TransactionController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER','ADMIN')")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<TransactionBaseDto> getTransactionById(@PathVariable UUID id) {
         Transaction transaction = transactionService.getById(id);
         String userId = SecurityContextHolder.getContext().getAuthentication().getName();

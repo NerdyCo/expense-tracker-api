@@ -1,3 +1,6 @@
+server:
+  port: 8081
+  
 spring:
   config:
     activate:
@@ -17,4 +20,4 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/expense-realm
+          issuer-uri: http://localhost:5050/realms/expense-realm
