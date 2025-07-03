@@ -1,11 +1,15 @@
 package com.dwi.expensetracker.configs;
 
+import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Configuration
 public class KeycloakAdminConfig {
     @Value("${keycloak.server-url}")
@@ -31,10 +35,9 @@ public class KeycloakAdminConfig {
         return KeycloakBuilder.builder()
                 .serverUrl(serverUrl)
                 .realm(realm)
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
                 .clientId(clientId)
                 .clientSecret(clientSecret)
-                .username(adminUsername)
-                .password(adminPassword)
                 .build();
     }
 }

@@ -25,8 +25,9 @@ keycloak:
   client-id: expense-tracker-admin
   client-secret: "UBtQnrk3q3vTeoYzIH9ozrn4URpHnoph"
   admin-username: admin
-  admin-password: admin
+  admin-password: password123
 
 logging:
   level:
     org.springframework.web.servlet.mvc: DEBUG
+    org.keycloak: DEBUG

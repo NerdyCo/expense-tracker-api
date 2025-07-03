@@ -1,19 +1,23 @@
 package com.dwi.expensetracker.controllers;
 
-import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.dwi.expensetracker.domains.dtos.auth.RegisterUserDto;
 import com.dwi.expensetracker.domains.dtos.auth.UpdateUserDto;
+import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
+import com.dwi.expensetracker.domains.entities.User;
 import com.dwi.expensetracker.exceptions.DuplicateResourceException;
+import com.dwi.expensetracker.mappers.Mapper;
 import com.dwi.expensetracker.services.AuthService;
 
 import jakarta.validation.Valid;
@@ -24,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final Mapper<User, UserBaseDto> userBaseMapper;
 
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegisterUserDto requestDto) {
@@ -59,5 +64,13 @@ public class AuthController {
         String result = authService.deleteUser(userId);
 
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    public ResponseEntity<UserBaseDto> getCurrentUser() {
+        String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = authService.getUserById(userId);
+        return ResponseEntity.ok(userBaseMapper.toDto(user));
     }
 }
