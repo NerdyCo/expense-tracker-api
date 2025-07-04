@@ -29,5 +29,6 @@ keycloak:
 
 logging:
   level:
+    com.dwi.expensetracker.configs.SecurityConfig: DEBUG
     org.springframework.web.servlet.mvc: DEBUG
     org.keycloak: DEBUG

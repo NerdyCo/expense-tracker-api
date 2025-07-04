@@ -43,14 +43,14 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserBaseDto> getUserById(@PathVariable String id) {
         User user = userService.getById(id);
         return ResponseEntity.ok(userBaseMapper.toDto(user));
     }
 
     @GetMapping("/{id}/categories")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<List<CategoryBaseDto>> getUserCategories(@PathVariable String id) {
         List<Category> categories = categoryService.getByUserId(id);
         return ResponseEntity.ok(
@@ -60,7 +60,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/transactions")
-    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('USER')")
     public ResponseEntity<List<TransactionBaseDto>> getUserTransactions(@PathVariable String id) {
         List<Transaction> transactions = transactionService.getByUserId(id);
         return ResponseEntity.ok(
