@@ -16,6 +16,8 @@ import com.dwi.expensetracker.repositories.UserRepository;
 import com.dwi.expensetracker.services.AuthService;
 
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.ClientErrorException;
+import jakarta.ws.rs.ServerErrorException;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -73,11 +75,9 @@ public class AuthServiceImpl implements AuthService {
         // Assign USER role
         try {
             RoleRepresentation userRole = keycloak.realm(realm).roles().get("USER").toRepresentation();
-            log.info("Attempting to assign role: {}", userRole.getName());
             keycloak.realm(realm).users().get(keycloakUserId)
                     .roles().realmLevel()
                     .add(Collections.singletonList(userRole));
-            log.info("Role assigned successfully to user ID: {}", keycloakUserId);
         } catch (Exception e) {
             log.error("Failed to assign role to user ID {}: {}", keycloakUserId, e.getMessage());
             throw new IllegalStateException("Failed to assign USER role: " + e.getMessage());
@@ -109,6 +109,7 @@ public class AuthServiceImpl implements AuthService {
                 throw new DuplicateResourceException("Email already exists");
             }
             userRep.setEmail(requestDto.getEmail());
+            userRep.setEmailVerified(false);
             user.setEmail(requestDto.getEmail());
             updated = true;
         }
@@ -122,10 +123,22 @@ public class AuthServiceImpl implements AuthService {
             updated = true;
         }
 
+        userRep.setEnabled(true);
+
         if (updated) {
-            keycloak.realm(realm).users().get(userId).update(userRep);
-            userRepository.save(user);
-            return "User updated successfully";
+            try {
+                keycloak.realm(realm).users().get(userId).update(userRep);
+                userRepository.save(user);
+                return "User updated successfully";
+            } catch (ClientErrorException | ServerErrorException e) {
+                String errorBody = e.getResponse().readEntity(String.class);
+                log.error("keycloak error: {} - {}", e.getResponse().getStatus(), errorBody);
+                throw new IllegalStateException("Failed to update user: " + errorBody);
+            } catch (Exception e) {
+                log.error("Failed to update user: {}", e.getMessage());
+                log.error("cause: {}", e.getCause() != null ? e.getCause().getMessage() : "N/A");
+                throw new IllegalStateException("Failed to update user: " + e.getMessage());
+            }
         }
 
         return "No changes provided";
