@@ -5,9 +5,9 @@ spring:
   application:
     name: expensetracker
   datasource:
-    url: jdbc:postgresql://localhost:5432/expense-tracker
-    username: postgres
-    password: nerdyco
+    url: jdbc:postgresql://localhost:5432/${DB_NAME}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -16,16 +16,16 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:5050/realms/expense-realm
-          jwk-set-uri: http://localhost:5050/realms/expense-realm/protocol/openid-connect/certs
+          issuer-uri: ${KEYCLOAK_SERVER_URL}/realms/${KEYCLOAK_REALM}
+          jwk-set-uri: ${KEYCLOAK_SERVER_URL}/realms/${KEYCLOAK_REALM}/protocol/openid-connect/certs
 
 keycloak:
-  server-url: http://localhost:5050
-  realm: expense-realm
-  client-id: expense-tracker-admin
-  client-secret: "UBtQnrk3q3vTeoYzIH9ozrn4URpHnoph"
-  admin-username: admin
-  admin-password: password123
+  server-url: ${KEYCLOAK_SERVER_URL}
+  realm: ${KEYCLOAK_REALM}
+  client-id: ${KEYCLOAK_CLIENT_ID}
+  client-secret: ${KEYCLOAK_CLIENT_SECRET}
+  admin-username: ${KEYCLOAK_ADMIN_USERNAME}
+  admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
 
 logging:
   level:

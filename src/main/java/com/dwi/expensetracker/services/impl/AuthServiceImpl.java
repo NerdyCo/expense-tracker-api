@@ -6,6 +6,7 @@ import org.keycloak.admin.client.Keycloak;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.dwi.expensetracker.domains.dtos.auth.RegisterUserDto;
@@ -29,7 +30,8 @@ public class AuthServiceImpl implements AuthService {
     private final Keycloak keycloak;
     private final UserRepository userRepository;
 
-    private String realm = "expense-realm";
+    @Value("${keycloak.realm}")
+    private String realm;
 
     @Override
     @Transactional
