@@ -44,32 +44,29 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwt -> {
             Map<String, Object> realmAccess = jwt.getClaimAsMap("realm_access");
-            log.debug("realm access: {}", realmAccess);
-
-            // check if realm access is null or empty
-            if (realmAccess == null || realmAccess.isEmpty()) {
-                log.debug("No realm_access found in JWT");
-                return Collections.emptyList();
-            }
-
-            // check if roles exist and are a list
             Object rolesObj = realmAccess.get("roles");
-            if (!(rolesObj instanceof List)) {
-                log.debug("roles nto found or not a list: {}", rolesObj);
-                return Collections.emptyList();
+
+            if (rolesObj instanceof List<?>) {
+                List<?> rawList = (List<?>) rolesObj;
+
+                List<String> realmRoles = rawList.stream()
+                        .filter(role -> role instanceof String)
+                        .map(role -> (String) role)
+                        .collect(Collectors.toList());
+
+                log.debug("roles: {}", realmRoles);
+
+                List<GrantedAuthority> authorities = realmRoles.stream()
+                        .filter(role -> role != null && !role.isBlank())
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
+                        .collect(Collectors.toList());
+
+                log.debug("mapped authorities: {}", authorities);
+                return authorities;
             }
 
-            List<String> realmRoles = (List<String>) rolesObj;
-            log.debug("roles: {}", realmRoles);
-
-            List<GrantedAuthority> authorities = realmRoles.stream()
-                    .filter(role -> role != null && !role.isBlank())
-                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                    .collect(Collectors.toList());
-
-            log.debug("mapped authorities: {}", authorities);
-
-            return authorities;
+            log.debug("roles not found or not a list: {}", rolesObj);
+            return Collections.emptyList();
         });
 
         return jwtAuthenticationConverter;
