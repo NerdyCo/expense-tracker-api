@@ -16,7 +16,9 @@ import com.dwi.expensetracker.domains.dtos.user.UserBaseDto;
 import com.dwi.expensetracker.domains.entities.Category;
 import com.dwi.expensetracker.domains.entities.Transaction;
 import com.dwi.expensetracker.domains.entities.User;
-import com.dwi.expensetracker.mappers.Mapper;
+import com.dwi.expensetracker.mappers.impl.category.CategoryBaseMapper;
+import com.dwi.expensetracker.mappers.impl.transaction.TransactionBaseMapper;
+import com.dwi.expensetracker.mappers.impl.user.UserMapper;
 import com.dwi.expensetracker.services.CategoryService;
 import com.dwi.expensetracker.services.TransactionService;
 import com.dwi.expensetracker.services.UserService;
@@ -31,14 +33,14 @@ public class UserController {
     private final UserService userService;
     private final CategoryService categoryService;
     private final TransactionService transactionService;
-    private final Mapper<User, UserBaseDto> userBaseMapper;
-    private final Mapper<Category, CategoryBaseDto> categoryBaseMapper;
-    private final Mapper<Transaction, TransactionBaseDto> transactionBaseMapper;
+    private final UserMapper userMapper;
+    private final CategoryBaseMapper categoryBaseMapper;
+    private final TransactionBaseMapper transactionBaseMapper;
 
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<UserBaseDto>> getAllUsers(Pageable pageable) {
-        Page<UserBaseDto> users = userService.getAll(pageable).map(userBaseMapper::toDto);
+        Page<UserBaseDto> users = userService.getAll(pageable).map(userMapper::toDto);
         return ResponseEntity.ok(users);
     }
 
@@ -46,7 +48,7 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserBaseDto> getUserById(@PathVariable String id) {
         User user = userService.getById(id);
-        return ResponseEntity.ok(userBaseMapper.toDto(user));
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 
     @GetMapping("/{id}/categories")

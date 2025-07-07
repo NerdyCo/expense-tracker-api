@@ -21,7 +21,9 @@ import com.dwi.expensetracker.domains.dtos.category.CategoryBaseDto;
 import com.dwi.expensetracker.domains.dtos.category.CategoryPatchDto;
 import com.dwi.expensetracker.domains.dtos.category.CategoryRequestDto;
 import com.dwi.expensetracker.domains.entities.Category;
-import com.dwi.expensetracker.mappers.Mapper;
+import com.dwi.expensetracker.mappers.impl.category.CategoryBaseMapper;
+import com.dwi.expensetracker.mappers.impl.category.CategoryPatchMapper;
+import com.dwi.expensetracker.mappers.impl.category.CategoryRequestMapper;
 import com.dwi.expensetracker.services.CategoryService;
 
 import jakarta.validation.Valid;
@@ -32,9 +34,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CategoryController {
     private final CategoryService categoryService;
-    private final Mapper<Category, CategoryBaseDto> categoryBaseMapper;
-    private final Mapper<Category, CategoryRequestDto> categoryRequestMapper;
-    private final Mapper<Category, CategoryPatchDto> categoryPatchMapper;
+    private final CategoryBaseMapper categoryBaseMapper;
+    private final CategoryRequestMapper categoryRequestMapper;
+    private final CategoryPatchMapper categoryPatchMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
@@ -88,8 +90,9 @@ public class CategoryController {
             throw new IllegalStateException("You can only update your own categories");
         }
 
-        Category patchRequest = categoryPatchMapper.toEntity(patchDto);
-        Category updatedCategory = categoryService.updatePartial(id, patchRequest);
+        categoryPatchMapper.updateCategoryFromDto(patchDto, category);
+
+        Category updatedCategory = categoryService.updatePartial(id, category);
 
         return ResponseEntity.ok(categoryBaseMapper.toDto(updatedCategory));
     }

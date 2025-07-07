@@ -21,7 +21,9 @@ import com.dwi.expensetracker.domains.dtos.transaction.TransactionBaseDto;
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionPatchDto;
 import com.dwi.expensetracker.domains.dtos.transaction.TransactionRequestDto;
 import com.dwi.expensetracker.domains.entities.Transaction;
-import com.dwi.expensetracker.mappers.Mapper;
+import com.dwi.expensetracker.mappers.impl.transaction.TransactionBaseMapper;
+import com.dwi.expensetracker.mappers.impl.transaction.TransactionPatchMapper;
+import com.dwi.expensetracker.mappers.impl.transaction.TransactionRequestMapper;
 import com.dwi.expensetracker.services.TransactionService;
 
 import jakarta.validation.Valid;
@@ -32,9 +34,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-    private final Mapper<Transaction, TransactionBaseDto> transactionBaseMapper;
-    private final Mapper<Transaction, TransactionRequestDto> transactionRequestMapper;
-    private final Mapper<Transaction, TransactionPatchDto> transactionPatchMapper;
+    private final TransactionBaseMapper transactionBaseMapper;
+    private final TransactionRequestMapper transactionRequestMapper;
+    private final TransactionPatchMapper transactionPatchMapper;
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
@@ -85,10 +87,11 @@ public class TransactionController {
             throw new IllegalStateException("You can only update your own transactions");
         }
 
-        Transaction patchRequest = transactionPatchMapper.toEntity(patchDto);
-        Transaction updateTransaction = transactionService.updatePartial(id, patchRequest);
+        transactionPatchMapper.updateTransactionFromDto(patchDto, transaction);
 
-        return ResponseEntity.ok(transactionBaseMapper.toDto(updateTransaction));
+        Transaction updatedTransaction = transactionService.updatePartial(id, transaction);
+
+        return ResponseEntity.ok(transactionBaseMapper.toDto(updatedTransaction));
     }
 
     @DeleteMapping("/{id}")
